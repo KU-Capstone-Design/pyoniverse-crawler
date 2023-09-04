@@ -1,0 +1,6 @@
+scrapy==2.10.1
+overrides==7.4.0
+pymongo==4.5.0
+marshmallow==3.20.1
+beautifulsoup4==4.12.2
+pre-commit
