@@ -1,15 +1,17 @@
 from dataclasses import asdict
 
+from overrides import override
 from pymongo import MongoClient, WriteConcern
 from pymongo.database import Database
 from pymongo.read_preferences import SecondaryPreferred
 from pymongo.results import UpdateResult
 from scrapy import Spider
 
-from pyoniverse.items.product import ProductVO
+from pyoniverse.items import ItemType
+from pyoniverse.pipelines import BasePipeline
 
 
-class DatabasePipeline:
+class DatabasePipeline(BasePipeline):
     """
     MongoDB에 아이템을 저장한다
     """
@@ -42,7 +44,8 @@ class DatabasePipeline:
     def close_spider(self, spider):
         self.__client.close()
 
-    def process_item(self, item: ProductVO, spider: Spider) -> ProductVO:
+    @override
+    def process_item(self, item: ItemType, spider: Spider) -> ItemType:
         """
         :param item: Item to be processed
         :param spider: Current Spider
