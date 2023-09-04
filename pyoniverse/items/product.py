@@ -24,3 +24,7 @@ class ProductVO:
     def __post_init__(self):
         self.created_at = get_timestamp()
         self.updated_at = get_timestamp()
+
+    @staticmethod
+    def get_collection_name():
+        return "products"

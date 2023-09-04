@@ -6,6 +6,8 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
+
 
 BOT_NAME = "pyoniverse"
 
@@ -102,3 +104,8 @@ FEEDS = {
         "indent": 4,
     },
 }
+
+# Secrets - .env
+MONGO_URI = os.getenv("MONGODB_URI")
+MONGO_DB = os.getenv("MONGODB_DB")
+MONGO_STAGE = os.getenv("STAGE")

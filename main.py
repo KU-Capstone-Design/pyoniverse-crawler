@@ -1,5 +1,7 @@
+import os
 from argparse import ArgumentParser
 
+import dotenv
 from scrapy import cmdline
 
 
@@ -10,7 +12,7 @@ parser = ArgumentParser(
 )
 
 parser.add_argument("--spider", type=str, required=True, help="Spider name")
-parser.add_argument("--dev", action="store_true", help="Development mode")
+parser.add_argument("--test", action="store_true", help="Development mode")
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -18,9 +20,11 @@ if __name__ == "__main__":
     loglevel = "DEBUG" if args.dev else "INFO"
 
     script = f"scrapy crawl --logfile {logfile} --loglevel {loglevel} {args.spider}"
-    if args.dev:
-        # Development mode - Don't save item to database
-        cmdline.execute(script.split() + ["-s", "ITEM_PIPELINES={}"])
-        pass
+    dotenv.load_dotenv()
+    if args.test:
+        # Test mode - Override stage environment variable
+        os.environ["STAGE"] = "test"
+        cmdline.execute(script.split())
     else:
+        # .dotenv 파일을 Github에 올리지 않기 때문에, GitAction Secret에 저장된 환경변수로 .dotenv 파일을 생성
         cmdline.execute(script.split())
