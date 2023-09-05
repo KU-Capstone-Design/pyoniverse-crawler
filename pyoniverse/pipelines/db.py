@@ -11,7 +11,7 @@ from pyoniverse.items import ItemType
 from pyoniverse.pipelines import BasePipeline
 
 
-class DatabasePipeline(BasePipeline):
+class MongoDBPipeline(BasePipeline):
     """
     MongoDB에 아이템을 저장한다
     """
@@ -19,8 +19,8 @@ class DatabasePipeline(BasePipeline):
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
-            mongo_uri=crawler.settings.get("MONGODB_URI"),
-            mongo_db=crawler.settings.get("MONGODB_DATABASE"),
+            mongo_uri=crawler.settings.get("MONGO_URI"),
+            mongo_db=crawler.settings.get("MONGO_DB"),
             stage=crawler.settings.get("STAGE"),
         )
 
@@ -55,7 +55,10 @@ class DatabasePipeline(BasePipeline):
             # Development mode - Don't save item to database
             return item
         else:
-            query = {"crawled_info": asdict(item.crawled_info)}
+            query = {
+                "crawled_info.spider": item.crawled_info.spider,
+                "crawled_info.id": item.crawled_info.id,
+            }
             update = {"$set": asdict(item)}
             res: UpdateResult = self.write_db.get_collection("products").update_one(
                 query,

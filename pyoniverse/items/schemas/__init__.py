@@ -1,3 +1,5 @@
+from typing import List
+
 from marshmallow import Schema, fields
 
 
@@ -13,5 +15,10 @@ class PriceSchema(Schema):
 
 
 class ImageSchema(Schema):
-    thumb: str = fields.URL(required=True)
-    others: fields.List(fields.URL, required=True)
+    thumb: str = fields.URL(allow_none=True)
+    others: List[str] = fields.List(fields.URL, required=True)
+
+
+class EventSchema(Schema):
+    brand: int = fields.Integer(required=True)
+    id: int = fields.Integer(required=True, validate=lambda x: x in [1, 2, 3, 4, 5])

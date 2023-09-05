@@ -49,11 +49,21 @@ ROBOTSTXT_OBEY = False
 #    "pyoniverse.middlewares.PyoniverseSpiderMiddleware": 543,
 # }
 
-# Enable or disable downloader middlewares
-# See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    "pyoniverse.middlewares.PyoniverseDownloaderMiddleware": 543,
-# }
+# scrapy-fake-useragent 설정(Recommended 를 따름) - https://pypi.org/project/scrapy-fake-useragent/
+DOWNLOADER_MIDDLEWARES = {
+    "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
+    # 'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+    "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 400,
+    # 'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
+}
+
+FAKEUSERAGENT_PROVIDERS = [
+    # 'scrapy_fake_useragent.providers.FakeUserAgentProvider',
+    "scrapy_fake_useragent.providers.FakerProvider",
+    "scrapy_fake_useragent.providers.FixedUserAgentProvider",
+    "mypackage.providers.CustomProvider",
+]
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -63,9 +73,10 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "pyoniverse.pipelines.PyoniversePipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "pyoniverse.pipelines.validator.ValidationPipeline": 100,
+    "pyoniverse.pipelines.db.MongoDBPipeline": 200,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -100,12 +111,16 @@ FEED_EXPORT_ENCODING = "utf-8"
 FEEDS = {
     "debug.json": {
         "format": "json",
-        "encoding": "utf8",
+        "store_empty": False,
         "indent": 4,
+        "overwrite": True,
     },
 }
 
 # Secrets - .env
-MONGO_URI = os.getenv("MONGODB_URI")
-MONGO_DB = os.getenv("MONGODB_DB")
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB = os.getenv("MONGO_DB")
 MONGO_STAGE = os.getenv("STAGE")
+
+# LOG
+LOG_FILE_APPEND = False

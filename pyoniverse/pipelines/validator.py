@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from scrapy import Spider
 from scrapy.exceptions import DropItem
 
@@ -25,7 +27,7 @@ class ValidationPipeline(BasePipeline):
             raise DropItem(f"Item is not has collection name: {item}")
         # Condition 3: Drop if the item is missing or invalid fields
         schema = item.get_schema()
-        reason: dict = schema.validate(item.dict())
+        reason: dict = schema.validate(asdict(item))
         if reason:
             raise DropItem(f"Item is not valid: {reason}")
         return item

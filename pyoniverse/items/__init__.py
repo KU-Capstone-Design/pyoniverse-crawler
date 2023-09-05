@@ -1,10 +1,15 @@
 from abc import ABCMeta, abstractmethod
-from dataclasses import KW_ONLY, dataclass, field
+from dataclasses import dataclass, field
 from typing import List, TypeVar
 
 from marshmallow import Schema
 
-from pyoniverse.items.schemas import CrawledInfoSchema, ImageSchema, PriceSchema
+from pyoniverse.items.schemas import (
+    CrawledInfoSchema,
+    EventSchema,
+    ImageSchema,
+    PriceSchema,
+)
 
 
 class ItemVO(metaclass=ABCMeta):
@@ -17,9 +22,8 @@ class ItemVO(metaclass=ABCMeta):
 ItemType = TypeVar("ItemType", bound=ItemVO)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CrawledInfoVO(ItemVO):
-    _: KW_ONLY
     spider: str = field()
     id: str = field()
     url: str = field()
@@ -29,9 +33,8 @@ class CrawledInfoVO(ItemVO):
         return CrawledInfoSchema()
 
 
-@dataclass
+@dataclass(kw_only=True)
 class PriceVO(ItemVO):
-    _: KW_ONLY
     value: float = field()
     currency: int = field()
 
@@ -40,12 +43,21 @@ class PriceVO(ItemVO):
         return PriceSchema()
 
 
-@dataclass
+@dataclass(kw_only=True)
 class ImageVO(ItemVO):
-    _: KW_ONLY
-    thumb: str = field()
+    thumb: str = field(default=None)
     others: List[str] = field(default_factory=list)
 
     @staticmethod
     def get_schema() -> Schema:
         return ImageSchema()
+
+
+@dataclass(kw_only=True)
+class EventVO(ItemVO):
+    brand: int = field()
+    id: int = field()
+
+    @staticmethod
+    def get_schema() -> Schema:
+        return EventSchema()

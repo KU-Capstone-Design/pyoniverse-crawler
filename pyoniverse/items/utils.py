@@ -39,3 +39,16 @@ def convert_event(event: str) -> int:
             return 5
         case _:
             raise ValueError(f"Unknown event: {event!r}")
+
+
+def convert_brand(brand: str) -> int:
+    brand = brand.upper().strip()
+    match brand:
+        case "GS25":
+            return 1
+        case "CU":
+            return 2
+        case "SEVEN ELEVEN":
+            return 3
+        case _:
+            raise ValueError(f"Unknown brand: {brand!r}")
