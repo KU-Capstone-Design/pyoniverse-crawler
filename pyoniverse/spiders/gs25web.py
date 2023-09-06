@@ -57,13 +57,12 @@ class Gs25WebSpider(Spider):
         for key, url in self.start_urls.items():
             if key == "event":
                 # Page 는 1부터 시작합니다.
-                # yield Request(
-                #     url,
-                #     callback=self.parse_event_home,
-                #     headers=self.headers,
-                #     cb_kwargs={"type": "event", "page": 1},
-                # )
-                pass
+                yield Request(
+                    url,
+                    callback=self.parse_event_home,
+                    headers=self.headers,
+                    cb_kwargs={"type": "event", "page": 1},
+                )
             elif key == "youus":
                 yield Request(
                     url,
@@ -97,7 +96,6 @@ class Gs25WebSpider(Spider):
             "searchWord": "",
             "parameterList": "TOTAL",
         }
-        self.logger.debug(f"Form data: {form_data}")
 
         header = self.headers.copy()
         yield FormRequest(
@@ -125,48 +123,68 @@ class Gs25WebSpider(Spider):
         req_url = self.search_urls["youus"]
         query = "CSRFToken={}".format(csrf_token)
 
-        search_food_ck_map = {
-            "FreshFoodKey": [
-                "productLunch",  # 도시락
-                "productRice",  # 김밥류
-                "productBurger",  # 버거/샌드위치
-                "productSnack",  # 간편식
-            ],
-            "DifferentServiceKey": [
-                "productDrink",  # 음료
-                "productMilk",  # 유제품
-                "productCookie",  # 과자/간식
-                "productRamen",  # 라면/가공식품
-                "productGoods",  # 생활용품
-            ],
-        }
-        for srv_food_ck, search_product_list in search_food_ck_map.items():
-            for search_product in search_product_list:
-                form_data = {
+        if "srv_food_ck" not in kwargs:
+            search_food_ck_map = {
+                "FreshFoodKey": [
+                    "productLunch",  # 도시락
+                    "productRice",  # 김밥류
+                    "productBurger",  # 버거/샌드위치
+                    "productSnack",  # 간편식
+                ],
+                "DifferentServiceKey": [
+                    "productDrink",  # 음료
+                    "productMilk",  # 유제품
+                    "productCookie",  # 과자/간식
+                    "productRamen",  # 라면/가공식품
+                    "productGoods",  # 생활용품
+                ],
+            }
+
+            for srv_food_ck, search_product_list in search_food_ck_map.items():
+                for search_product in search_product_list:
+                    form_data = {
+                        "pageNum": str(kwargs["page"]),
+                        "pageSize": "16",
+                        "searchWord": "",
+                        "searchHPrice": "",
+                        "searchTPrice": "",
+                        "searchSrvFoodCK": srv_food_ck,
+                        "searchSort": "searchALLSort",
+                        "searchProduct": search_product,
+                    }
+
+                    header = self.headers.copy()
+                    kwargs.update(
+                        {"srv_food_ck": srv_food_ck, "search_product": search_product}
+                    )
+                    yield FormRequest(
+                        url=f"{req_url}?{query}",
+                        callback=self.parse_youus,
+                        errback=self.errback,
+                        formdata=form_data,
+                        cb_kwargs=kwargs,
+                        headers=header,
+                        dont_filter=True,
+                    )
+        else:
+            yield FormRequest(
+                url=f"{req_url}?{query}",
+                callback=self.parse_youus,
+                errback=self.errback,
+                formdata={
                     "pageNum": str(kwargs["page"]),
                     "pageSize": "16",
                     "searchWord": "",
                     "searchHPrice": "",
                     "searchTPrice": "",
-                    "searchSrvFoodCK": srv_food_ck,
+                    "searchSrvFoodCK": kwargs["srv_food_ck"],
                     "searchSort": "searchALLSort",
-                    "searchProduct": search_product,
-                }
-                self.logger.debug(f"Form data: {form_data}")
-
-                header = self.headers.copy()
-                kwargs.update(
-                    {"srv_food_ck": srv_food_ck, "search_product": search_product}
-                )
-                yield FormRequest(
-                    url=f"{req_url}?{query}",
-                    callback=self.parse_youus,
-                    errback=self.errback,
-                    formdata=form_data,
-                    cb_kwargs=kwargs,
-                    headers=header,
-                    dont_filter=True,
-                )
+                    "searchProduct": kwargs["search_product"],
+                },
+                cb_kwargs=kwargs,
+                headers=self.headers,
+                dont_filter=True,
+            )
 
     def parse_event(self, response: HtmlResponse, **kwargs) -> ItemType:
         body = response.json()
@@ -239,10 +257,11 @@ class Gs25WebSpider(Spider):
             # product_id = image_path 의 마지막 부분을 id 로 사용합니다.
             product_id = Path(product_img).stem
 
+            events = []
             if result.get("isNew", "F") == "T":
-                event_type = "NEW"
-            else:
-                event_type = None
+                events.append("NEW")
+            if kwargs["srv_food_ck"] == "DifferentServiceKey":
+                events.append("MONOPOLY")
 
             # TODO : Category 분류는 Batch로 빼기
             category = None
@@ -344,19 +363,19 @@ class Gs25WebSpider(Spider):
                     EventVO(
                         id=convert_event(event_type), brand=convert_brand(self.brand)
                     )
-                ]
-                if event_type
-                else [],
+                    for event_type in events
+                ],
             )
             yield product
 
         current_page = int(kwargs["page"])
         self.logger.info(f"Next page: {current_page + 1}/{pagination['numberOfPages']}")
+        kwargs["page"] = current_page + 1
         yield Request(
             self.start_urls["event"],
             callback=self.parse_youus_home,
             headers=self.headers,
-            cb_kwargs={"type": "event", "page": current_page + 1},
+            cb_kwargs=kwargs,
             dont_filter=True,
         )
 
