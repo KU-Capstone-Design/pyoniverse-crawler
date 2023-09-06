@@ -18,6 +18,10 @@ class ItemVO(metaclass=ABCMeta):
     def get_schema() -> Schema:
         pass
 
+    @staticmethod
+    def get_collection_name() -> str:
+        raise NotImplementedError
+
 
 ItemType = TypeVar("ItemType", bound=ItemVO)
 

@@ -51,18 +51,19 @@ class Gs25WebSpider(Spider):
         for key, url in self.start_urls.items():
             if key == "event":
                 # Page 는 1부터 시작합니다.
-                yield Request(
-                    url,
-                    callback=self.parse_event_home,
-                    headers=self.headers,
-                    cb_kwargs={"type": "event", "page": 1},
-                )
+                # yield Request(
+                #     url,
+                #     callback=self.parse_event_home,
+                #     headers=self.headers,
+                #     cb_kwargs={"type": "event", "page": 1},
+                # )
+                pass
             elif key == "youus":
                 yield Request(
                     url,
                     callback=self.parse_youus,
                     headers=self.headers,
-                    cb_kwargs={"type": "youus"},
+                    cb_kwargs={"type": "youus", "page": 1},
                 )
             else:
                 raise RuntimeError("Unknown key: {}".format(key))
@@ -98,7 +99,12 @@ class Gs25WebSpider(Spider):
         )
 
     def parse_youus(self, response: HtmlResponse, **kwargs) -> ItemType:
-        pass
+        """
+        :param response:
+        :param kwargs:
+        :return:
+        GS25 의 특화 상품 리스트
+        """
 
     def parse_event(self, response: HtmlResponse, **kwargs) -> ItemType:
         body = response.json()

@@ -52,3 +52,26 @@ def convert_brand(brand: str) -> int:
             return 3
         case _:
             raise ValueError(f"Unknown brand: {brand!r}")
+
+
+def convert_category(category: str) -> int:
+    category = category.upper().strip()
+    match category:
+        case "DRINK":
+            return 1
+        case "ALCOHOL":
+            return 2
+        case "SNACK":
+            return 3
+        case "ICE CREAM":
+            return 4
+        case "CUP NOODLE":
+            return 5
+        case "BREAD":
+            return 6
+        case "FOOD":
+            return 7
+        case "HOUSEHOLD GOODS":
+            return 8
+        case _:
+            raise ValueError(f"Unknown category: {category!r}")

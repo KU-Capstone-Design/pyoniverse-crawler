@@ -1,4 +1,4 @@
-from dataclasses import asdict
+from dataclasses import asdict, fields
 
 from overrides import override
 from pymongo import MongoClient, WriteConcern
@@ -7,7 +7,7 @@ from pymongo.read_preferences import SecondaryPreferred
 from pymongo.results import UpdateResult
 from scrapy import Spider
 
-from pyoniverse.items import ItemType
+from pyoniverse.items import EventVO, ItemType
 from pyoniverse.pipelines import BasePipeline
 
 
@@ -55,16 +55,38 @@ class MongoDBPipeline(BasePipeline):
             # Development mode - Don't save item to database
             return item
         else:
+            coll: str = item.get_collection_name()
             query = {
                 "crawled_info.spider": item.crawled_info.spider,
                 "crawled_info.id": item.crawled_info.id,
             }
+            hint = [("crawled_info.spider", 1), ("crawled_info.id", 1)]
+            prv_item = self.read_db.get_collection(coll).find_one(
+                query, {"_id": False}, hint=hint
+            )
+
+            if prv_item:
+                if coll == "products":
+                    # item 에서 null 인 값은 이전 값으로 대체 && events 는 합친다.
+                    for _field in fields(item):
+                        if _field.name == "events":
+                            continue
+                        if prv_val := prv_item.get(_field.name):
+                            if getattr(item, _field.name) is None:
+                                setattr(item, _field.name, prv_val)
+                    cur_events = list(map(asdict, item.events))
+                    prv_events = prv_item.get("events", [])
+                    events = cur_events + prv_events
+                    events = set(map(lambda x: (x["brand"], x["id"]), events))
+                    events = list(map(lambda x: {"brand": x[0], "id": x[1]}, events))
+                    item.events = [EventVO(**event) for event in events]
+
             update = {"$set": asdict(item)}
             res: UpdateResult = self.write_db.get_collection("products").update_one(
                 query,
                 update,
                 upsert=True,
-                hint=[("crawled_info.spider", 1), ("crawled_info.id", 1)],
+                hint=hint,
             )
             if res.matched_count == 0:
                 spider.logger.info(f"New item saved: {asdict(item.crawled_info)}")

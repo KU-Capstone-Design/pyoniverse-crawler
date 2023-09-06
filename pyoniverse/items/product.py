@@ -1,5 +1,7 @@
-from dataclasses import KW_ONLY, dataclass, field
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Optional
+
+from overrides import override
 
 from pyoniverse.items import CrawledInfoVO, EventVO, ImageVO, ItemVO, PriceVO
 from pyoniverse.items.schemas.product import ProductSchema
@@ -17,6 +19,7 @@ class ProductVO(ItemVO):
     name: str = field()
     price: PriceVO = field()
     image: ImageVO = field()
+    category: Optional[int] = field(default=None)
     events: List[EventVO] = field(default_factory=list)
     description: str = field(default=None)
     created_at: int = field(default=None)
@@ -27,7 +30,8 @@ class ProductVO(ItemVO):
         self.updated_at = get_timestamp()
 
     @staticmethod
-    def get_collection_name():
+    @override
+    def get_collection_name() -> str:
         return "products"
 
     @staticmethod
