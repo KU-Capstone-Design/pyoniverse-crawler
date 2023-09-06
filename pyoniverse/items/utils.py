@@ -67,11 +67,19 @@ def convert_category(category: str) -> int:
             return 4
         case "CUP NOODLE":
             return 5
-        case "BREAD":
+        case "LUNCH BOX":
             return 6
-        case "FOOD":
+        case "SALAD":
             return 7
-        case "HOUSEHOLD GOODS":
+        case "KIMBAP":
             return 8
+        case "SANDWICH":
+            return 9
+        case "BREAD":
+            return 10
+        case "FOOD":
+            return 11
+        case "HOUSEHOLD GOODS":
+            return 12
         case _:
             raise ValueError(f"Unknown category: {category!r}")

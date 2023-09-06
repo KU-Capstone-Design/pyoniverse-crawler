@@ -120,7 +120,7 @@ FEEDS = {
 # Secrets - .env
 MONGO_URI = os.getenv("MONGO_URI")
 MONGO_DB = os.getenv("MONGO_DB")
-MONGO_STAGE = os.getenv("STAGE")
+STAGE = os.getenv("STAGE")
 
 # LOG
 LOG_FILE_APPEND = False

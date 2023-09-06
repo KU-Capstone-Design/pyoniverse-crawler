@@ -51,7 +51,7 @@ class MongoDBPipeline(BasePipeline):
         :param spider: Current Spider
         :return: Processed Item
         """
-        if spider.settings.get("STAGE") == "test":
+        if self.stage == "test":
             # Development mode - Don't save item to database
             return item
         else:
