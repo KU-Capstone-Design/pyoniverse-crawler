@@ -1,10 +1,12 @@
 import re
+from pathlib import Path
 from time import sleep
 
 from bs4 import BeautifulSoup
 from scrapy import FormRequest, Request, Spider
 from scrapy.exceptions import DropItem
 from scrapy.http import HtmlResponse
+from scrapy.shell import inspect_response
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.python.failure import Failure
 
@@ -25,15 +27,15 @@ class SevenElevenWebSpider(Spider):
     base_url = "https://www.7-eleven.co.kr"
 
     tab = {
-        "Fresh Food": {
-            "main": "/product/bestdosirakList.asp",
-            "pagination": "/product/dosirakNewMoreAjax.asp",
-            "detail": "/product/bestdosirakView.asp",
-        },
-        # "Cafe": {
-        #     "main": "/product/7cafe.asp",
-        #     "pagination": None, # Cafe 는 pagination 없음
+        # "Fresh Food": {
+        #     "main": "/product/bestdosirakList.asp",
+        #     "pagination": "/product/dosirakNewMoreAjax.asp",
+        #     "detail": "/product/bestdosirakView.asp",
         # },
+        "Cafe": {
+            "main": "/product/7cafe.asp",
+            "pagination": None,  # Cafe 는 pagination 없음
+        },
         # "Event": {
         #     "main": "/product/presentList.asp",
         #     "pagination": "/product/listMoreAjax.asp",
@@ -60,45 +62,54 @@ class SevenElevenWebSpider(Spider):
 
     def enter_main(self, response: HtmlResponse, **kwargs) -> Request:
         for tab, url in self.tab.items():
-            if tab == "PB":
-                yield Request(
-                    url=self.base_url + url["main"],
-                    callback=self.form_list,
-                    errback=self.errback,
-                    cb_kwargs={"tab": tab},
-                    dont_filter=True,
-                )
-            elif tab == "Fresh Food":
-                # 한번에 모든 데이터를 불러온다
-                ptabs = [
-                    "noodle",  # 삼각김밥, 김밥,
-                    "mini",  # 도시락, 조리면
-                    "d_group",  # 샌드위치, 햄버거
-                ]
-                for ptab in ptabs:
-                    form = {
-                        "intPageSize": "100",
-                        "pTab": ptab,
-                    }
-                    kwargs["size"] = "100"
-                    kwargs["tab"] = tab
-                    kwargs["ptab"] = ptab
-                    yield FormRequest(
-                        url=self.base_url + self.tab[tab]["pagination"],
-                        formdata=form,
-                        callback=self.parse_list,
+            match tab:
+                case "PB":
+                    yield Request(
+                        url=self.base_url + url["main"],
+                        callback=self.form_list,
                         errback=self.errback,
-                        cb_kwargs=kwargs,
+                        cb_kwargs={"tab": tab},
                         dont_filter=True,
                     )
-            else:
-                yield Request(
-                    url=self.base_url + url["main"],
-                    callback=self.parse_list,
-                    errback=self.errback,
-                    cb_kwargs={"tab": tab},
-                    dont_filter=True,
-                )
+                case "Fresh Food":
+                    # 한번에 모든 데이터를 불러온다
+                    ptabs = [
+                        "noodle",  # 삼각김밥, 김밥,
+                        "mini",  # 도시락, 조리면
+                        "d_group",  # 샌드위치, 햄버거
+                    ]
+                    for ptab in ptabs:
+                        form = {
+                            "intPageSize": "100",
+                            "pTab": ptab,
+                        }
+                        kwargs["size"] = "100"
+                        kwargs["tab"] = tab
+                        kwargs["ptab"] = ptab
+                        yield FormRequest(
+                            url=self.base_url + self.tab[tab]["pagination"],
+                            formdata=form,
+                            callback=self.parse_list,
+                            errback=self.errback,
+                            cb_kwargs=kwargs,
+                            dont_filter=True,
+                        )
+                case "Cafe":
+                    yield Request(
+                        url=self.base_url + url["main"],
+                        callback=self.parse_cafe,
+                        errback=self.errback,
+                        cb_kwargs={"tab": tab},
+                        dont_filter=True,
+                    )
+                case _:
+                    yield Request(
+                        url=self.base_url + url["main"],
+                        callback=self.parse_list,
+                        errback=self.errback,
+                        cb_kwargs={"tab": tab},
+                        dont_filter=True,
+                    )
 
     def form_list(self, response: HtmlResponse, **kwargs) -> Request:
         soup = BeautifulSoup(response.text, "html.parser")
@@ -118,6 +129,7 @@ class SevenElevenWebSpider(Spider):
         )
 
     def parse_list(self, response: HtmlResponse, **kwargs) -> Request:
+        # inspect_response(response, self)
         soup = BeautifulSoup(response.text, "html.parser")
 
         match kwargs["tab"]:
@@ -182,6 +194,8 @@ class SevenElevenWebSpider(Spider):
                                 "category": category,
                             },
                         )
+            case "Cafe":
+                pass
             case _:
                 pass
 
@@ -226,6 +240,43 @@ class SevenElevenWebSpider(Spider):
         )
         breakpoint()
         yield product
+
+    def parse_cafe(self, response: HtmlResponse, **kwargs) -> ItemType:
+        soup = BeautifulSoup(response.text, "html.parser")
+        menu = soup.select_one(".cafeMenu")
+        items = menu.select("li")
+        for item in items:
+            try:
+                name = item.select_one(".tit").text.strip()
+            except Exception:
+                self.logger.error("Name doesn't exist")
+                raise DropItem("Name doesn't exist")
+
+            try:
+                img = self.base_url + item.select_one("img")["src"]
+            except Exception:
+                self.logger.error("Image doesn't exist")
+                raise DropItem("Image doesn't exist")
+
+            try:
+                price = item.select_one(".price").text.strip()
+                price = float(re.sub(r"\D", "", price))
+            except Exception:
+                self.logger.error("Price doesn't exist")
+                raise DropItem("Price doesn't exist")
+
+            product = ProductVO(
+                crawled_info=CrawledInfoVO(
+                    spider=self.name,
+                    id=Path(img).stem,
+                    url=response.url,
+                ),
+                name=name,
+                image=ImageVO(thumb=img),
+                price=PriceVO(value=price, currency=convert_currency("KRW")),
+                category=convert_category("DRINK"),
+            )
+            yield product
 
     def errback(self, failure: Failure):
         # Retry if 403 Forbidden
