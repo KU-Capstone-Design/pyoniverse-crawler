@@ -12,7 +12,7 @@ parser = ArgumentParser(
     epilog="Created by YeongRo Yun",
 )
 
-parser.add_argument("--spider", type=str, required=True, help="Spider name")
+parser.add_argument("spider", type=str, help="Spider name")
 parser.add_argument("--test", action="store_true", help="Development mode")
 
 nest_asyncio.apply()
