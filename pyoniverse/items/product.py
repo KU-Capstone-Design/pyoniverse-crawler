@@ -21,7 +21,8 @@ class ProductVO(ItemVO):
     image: ImageVO = field()
     category: Optional[int] = field(default=None)
     events: List[EventVO] = field(default_factory=list)
-    description: str = field(default=None)
+    description: Optional[str] = field(default=None)
+    tags: List[str] = field(default_factory=list)
     created_at: int = field(default=None)
     updated_at: int = field(default=None)
 

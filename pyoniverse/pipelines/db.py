@@ -81,6 +81,9 @@ class MongoDBPipeline(BasePipeline):
                     events = list(map(lambda x: {"brand": x[0], "id": x[1]}, events))
                     item.events = [EventVO(**event) for event in events]
 
+                # created_at 은 이전 값으로 대체
+                item.created_at = prv_item["created_at"]
+
             update = {"$set": asdict(item)}
             res: UpdateResult = self.write_db.get_collection("products").update_one(
                 query,

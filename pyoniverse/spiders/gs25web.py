@@ -49,10 +49,6 @@ class Gs25WebSpider(Spider):
         "X-Requested-With": "XMLHttpRequest",
     }
 
-    custom_settings = {
-        "DOWNLOAD_DELAY": 5,
-    }
-
     def start_requests(self):
         for key, url in self.start_urls.items():
             if key == "event":
