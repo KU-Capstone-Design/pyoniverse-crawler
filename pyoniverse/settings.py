@@ -58,10 +58,9 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 FAKEUSERAGENT_PROVIDERS = [
-    # 'scrapy_fake_useragent.providers.FakeUserAgentProvider',
+    "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
     "scrapy_fake_useragent.providers.FakerProvider",
-    "scrapy_fake_useragent.providers.FixedUserAgentProvider",
-    "mypackage.providers.CustomProvider",
+    "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
 ]
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
 
