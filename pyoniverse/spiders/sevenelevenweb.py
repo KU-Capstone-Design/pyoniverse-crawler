@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 from scrapy import FormRequest, Request, Spider
 from scrapy.exceptions import DropItem
 from scrapy.http import HtmlResponse
-from scrapy.shell import inspect_response
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.python.failure import Failure
 
@@ -27,24 +26,20 @@ class SevenElevenWebSpider(Spider):
     base_url = "https://www.7-eleven.co.kr"
 
     tab = {
-        # "Fresh Food": {
-        #     "main": "/product/bestdosirakList.asp",
-        #     "pagination": "/product/dosirakNewMoreAjax.asp",
-        #     "detail": "/product/bestdosirakView.asp",
-        # },
-        # "Cafe": {
-        #     "main": "/product/7cafe.asp",
-        #     "pagination": None,  # Cafe 는 pagination 없음
-        # },
+        "Fresh Food": {
+            "main": "/product/bestdosirakList.asp",
+            "pagination": "/product/dosirakNewMoreAjax.asp",
+            "detail": "/product/bestdosirakView.asp",
+        },
+        "Cafe": {
+            "main": "/product/7cafe.asp",
+            "pagination": None,  # Cafe 는 pagination 없음
+        },
         "Event": {
             "main": "/product/presentList.asp",
             "pagination": "/product/listMoreAjax.asp",
             "detail": "/product/presentView.asp",
         },
-        # "PB": {
-        #     "main": "/product/7prodList.asp",
-        #     "pagination": "/product/listMoreAjax.asp",
-        # },
     }
 
     custom_settings = {
@@ -64,14 +59,6 @@ class SevenElevenWebSpider(Spider):
     def enter_main(self, response: HtmlResponse, **kwargs) -> Request:
         for tab, url in self.tab.items():
             match tab:
-                case "PB":
-                    yield Request(
-                        url=self.base_url + url["main"],
-                        callback=self.form_list,
-                        errback=self.errback,
-                        cb_kwargs={"tab": tab},
-                        dont_filter=True,
-                    )
                 case "Fresh Food":
                     # 한번에 모든 데이터를 불러온다
                     ptabs = [
@@ -120,6 +107,8 @@ class SevenElevenWebSpider(Spider):
                         "2",  # 2+1,
                         "3",  # GIFT
                         "4",  # DISCOUNT
+                        "5",  # PB
+                        "8",  # NEW
                     ]
 
                     for ptab in ptabs:
@@ -288,6 +277,8 @@ class SevenElevenWebSpider(Spider):
                 tmp.append("NEW")
             elif tag == "할인":
                 tmp.append("DISCOUNT")
+            elif tag == "PB":
+                tmp.append("MONOPOLY")
             else:
                 tmp.append(tag)
         event_tags = tmp
@@ -407,6 +398,6 @@ class SevenElevenWebSpider(Spider):
             req.dont_filter = True
             self.logger.error("403 Forbidden: {}. Retry after 5 sec".format(req.url))
             sleep(5)
-            # TODO : Retry Handling
+            yield req
         else:
             self.logger.error(repr(failure))
