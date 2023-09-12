@@ -26,7 +26,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 5
+DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -58,10 +58,9 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 FAKEUSERAGENT_PROVIDERS = [
-    # 'scrapy_fake_useragent.providers.FakeUserAgentProvider',
+    "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
     "scrapy_fake_useragent.providers.FakerProvider",
-    "scrapy_fake_useragent.providers.FixedUserAgentProvider",
-    "mypackage.providers.CustomProvider",
+    "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
 ]
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
 

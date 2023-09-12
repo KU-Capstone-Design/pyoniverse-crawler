@@ -37,6 +37,12 @@ def convert_event(event: str) -> int:
             return 4
         case "MONOPOLY":
             return 5
+        case "RESERVATION":
+            # 예약이 필요한 상품
+            return 6
+        case "DISCOUNT":
+            # 할인 이벤트
+            return 7
         case _:
             raise ValueError(f"Unknown event: {event!r}")
 
