@@ -255,7 +255,7 @@ class SevenElevenWebSpider(Spider):
         kwargs["detail_form"]["listCnt"] = cur_size
         kwargs["detail_form"]["listPage"] = cur_page
 
-        yield from self.parse_event_items(items, kwargs["detail_form"], **kwargs)
+        yield from self.parse_event_items(items, **kwargs)
 
         kwargs["list_form"]["intCurrPage"] = cur_page
 
@@ -279,6 +279,10 @@ class SevenElevenWebSpider(Spider):
                 tmp.append("DISCOUNT")
             elif tag == "PB":
                 tmp.append("MONOPOLY")
+            elif tag == "단체":
+                tmp.append("RESERVATION")
+            elif tag == "인기":
+                continue
             else:
                 tmp.append(tag)
         event_tags = tmp

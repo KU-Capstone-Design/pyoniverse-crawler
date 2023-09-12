@@ -67,10 +67,6 @@ class CUWebSpider(Spider):
         "cu": "CUG",
     }
 
-    custom_settings = {
-        "DOWNLOAD_DELAY": 1,
-    }
-
     def start_requests(self) -> Request:
         # Get cookies
         yield Request(

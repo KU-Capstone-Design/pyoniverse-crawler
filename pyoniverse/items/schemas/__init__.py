@@ -11,7 +11,7 @@ class CrawledInfoSchema(Schema):
 
 class PriceSchema(Schema):
     value: float = fields.Float(required=True)
-    currency: int = fields.Integer(required=True, validate=lambda x: x in [1])
+    currency: int = fields.Integer(required=True)
 
 
 class ImageSchema(Schema):
@@ -21,4 +21,4 @@ class ImageSchema(Schema):
 
 class EventSchema(Schema):
     brand: int = fields.Integer(required=True)
-    id: int = fields.Integer(required=True, validate=lambda x: x in [1, 2, 3, 4, 5])
+    id: int = fields.Integer(required=True)
