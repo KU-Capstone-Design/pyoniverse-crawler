@@ -23,6 +23,7 @@ class ProductVO(ItemVO):
     events: List[EventVO] = field(default_factory=list)
     description: Optional[str] = field(default=None)
     tags: List[str] = field(default_factory=list)
+    discounted_price: Optional[float] = field(default=None)  # 할인 이벤트일 때 가격 기재
     created_at: int = field(default=None)
     updated_at: int = field(default=None)
 

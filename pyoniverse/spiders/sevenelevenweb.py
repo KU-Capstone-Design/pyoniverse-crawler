@@ -32,14 +32,15 @@ class SevenElevenWebSpider(Spider):
         #     "pagination": "/product/dosirakNewMoreAjax.asp",
         #     "detail": "/product/bestdosirakView.asp",
         # },
-        "Cafe": {
-            "main": "/product/7cafe.asp",
-            "pagination": None,  # Cafe 는 pagination 없음
-        },
-        # "Event": {
-        #     "main": "/product/presentList.asp",
-        #     "pagination": "/product/listMoreAjax.asp",
+        # "Cafe": {
+        #     "main": "/product/7cafe.asp",
+        #     "pagination": None,  # Cafe 는 pagination 없음
         # },
+        "Event": {
+            "main": "/product/presentList.asp",
+            "pagination": "/product/listMoreAjax.asp",
+            "detail": "/product/presentView.asp",
+        },
         # "PB": {
         #     "main": "/product/7prodList.asp",
         #     "pagination": "/product/listMoreAjax.asp",
@@ -102,14 +103,40 @@ class SevenElevenWebSpider(Spider):
                         cb_kwargs={"tab": tab},
                         dont_filter=True,
                     )
+                case "Event":
+                    form = {
+                        "cateCd1": "",
+                        "cateNm1": "",
+                        "cateCd2": "",
+                        "cateNm2": "",
+                        "cateCd3": "",
+                        "cateNm3": "",
+                        "pTab": None,
+                        "pCd": "",
+                        "intPageSize": "",
+                    }
+                    ptabs = [
+                        "1",  # 1+1,
+                        "2",  # 2+1,
+                        "3",  # GIFT
+                        "4",  # DISCOUNT
+                    ]
+
+                    for ptab in ptabs:
+                        form["pTab"] = ptab
+                        kwargs["size"] = "10"
+                        kwargs["tab"] = tab
+                        kwargs["ptab"] = ptab
+                        yield FormRequest(
+                            url=self.base_url + self.tab[tab]["main"],
+                            formdata=form,
+                            callback=self.parse_list,
+                            errback=self.errback,
+                            cb_kwargs=kwargs,
+                            dont_filter=True,
+                        )
                 case _:
-                    yield Request(
-                        url=self.base_url + url["main"],
-                        callback=self.parse_list,
-                        errback=self.errback,
-                        cb_kwargs={"tab": tab},
-                        dont_filter=True,
-                    )
+                    raise ValueError("Invalid tab")
 
     def form_list(self, response: HtmlResponse, **kwargs) -> Request:
         soup = BeautifulSoup(response.text, "html.parser")
@@ -129,7 +156,6 @@ class SevenElevenWebSpider(Spider):
         )
 
     def parse_list(self, response: HtmlResponse, **kwargs) -> Request:
-        # inspect_response(response, self)
         soup = BeautifulSoup(response.text, "html.parser")
 
         match kwargs["tab"]:
@@ -164,13 +190,7 @@ class SevenElevenWebSpider(Spider):
                     ]  # 처음과 마지막은 브랜드 & 페이징
                     for item in items:
                         # parse events
-                        event_tags = item.select(".tag_list_01 > li")
-                        event_tags = [tag.text.strip() for tag in event_tags]
-                        event_tags = [
-                            tag if tag != "신상품" else "NEW" for tag in event_tags
-                        ]
-                        crawl_id = item.select_one("a")["href"]
-                        crawl_id = re.search(r"fncGoView\('(.+)'\)", crawl_id).group(1)
+                        crawl_id, event_tags = self.extract_metainfos(item)
 
                         if kwargs["ptab"] == "d_group":
                             category = "SANDWICH"
@@ -194,10 +214,47 @@ class SevenElevenWebSpider(Spider):
                                 "category": category,
                             },
                         )
-            case "Cafe":
-                pass
+            case "Event":
+                items = soup.select("#listUl > li")[1:-1]
+                form = soup.select("#actFrm > input")
+                if not form:
+                    self.logger.error("No form in {}".format(response.url))
+                    raise ValueError("No form in {}".format(response.url))
+                form = {f["name"]: f["value"] for f in form}
+
+                for item in items:
+                    crawl_id, event_tags = self.extract_metainfos(item)
+                    form["pCd"] = crawl_id
+                    yield FormRequest(
+                        url=self.base_url + self.tab[kwargs["tab"]]["detail"],
+                        formdata=form,
+                        callback=self.parse,
+                        errback=self.errback,
+                        cb_kwargs={
+                            "events": event_tags,
+                            "crawl_id": crawl_id,
+                            "category": None,
+                        },
+                    )
+
             case _:
-                pass
+                raise ValueError("Invalid tab")
+
+    def extract_metainfos(self, item):
+        event_tags = item.select(".tag_list_01 > li")
+        event_tags = [tag.text.strip() for tag in event_tags]
+        tmp = []
+        for tag in event_tags:
+            if tag == "신상품":
+                tmp.append("NEW")
+            elif tag == "할인":
+                tmp.append("DISCOUNT")
+            else:
+                tmp.append(tag)
+        event_tags = tmp
+        crawl_id = item.select_one("a")["href"]
+        crawl_id = re.search(r"fncGoView\('(.+)'\)", crawl_id).group(1)
+        return crawl_id, event_tags
 
     def parse(self, response: HtmlResponse, **kwargs) -> ItemType:
         soup = BeautifulSoup(response.text, "html.parser")
@@ -213,9 +270,18 @@ class SevenElevenWebSpider(Spider):
             self.logger.error("Image not found")
             raise DropItem("Image not found")
 
+        discounted_price = None
         try:
-            price = soup.select_one(".product_price > strong").text.strip()
-            price = float(re.sub(r"\D", "", price))
+            if "DISCOUNT" in kwargs["events"]:
+                discounted_price = soup.select_one(
+                    ".product_price > strong"
+                ).text.strip()
+                price = soup.select_one(".product_price > del").text.strip()
+                discounted_price = float(re.sub(r"\D", "", discounted_price))
+                price = float(re.sub(r"\D", "", price))
+            else:
+                price = soup.select_one(".product_price > strong").text.strip()
+                price = float(re.sub(r"\D", "", price))
         except Exception:
             self.logger.error("Price not found")
             raise DropItem("Price not found")
@@ -228,17 +294,17 @@ class SevenElevenWebSpider(Spider):
                 url=response.url,
             ),
             category=convert_category(kwargs["category"])
-            if kwargs["category"]
+            if kwargs.get("category")
             else None,
             name=name,
             price=PriceVO(value=price, currency=convert_currency("KRW")),
+            discounted_price=discounted_price,
             image=ImageVO(thumb=img),
             events=[
                 EventVO(brand=convert_brand(self.brand), id=convert_event(e))
                 for e in kwargs["events"]
             ],
         )
-        breakpoint()
         yield product
 
     def parse_cafe(self, response: HtmlResponse, **kwargs) -> ItemType:
