@@ -220,25 +220,64 @@ class SevenElevenWebSpider(Spider):
                 if not form:
                     self.logger.error("No form in {}".format(response.url))
                     raise ValueError("No form in {}".format(response.url))
-                form = {f["name"]: f["value"] for f in form}
+                detail_form = {f["name"]: f["value"] for f in form}
 
-                for item in items:
-                    crawl_id, event_tags = self.extract_metainfos(item)
-                    form["pCd"] = crawl_id
-                    yield FormRequest(
-                        url=self.base_url + self.tab[kwargs["tab"]]["detail"],
-                        formdata=form,
-                        callback=self.parse,
-                        errback=self.errback,
-                        cb_kwargs={
-                            "events": event_tags,
-                            "crawl_id": crawl_id,
-                            "category": None,
-                        },
-                    )
+                yield from self.parse_event_items(items, detail_form, **kwargs)
+
+                list_form = {
+                    "intPageSize": "10",
+                    "intCurrPage": "2",
+                    "cateCd1": "",
+                    "cateCd2": "",
+                    "cateCd3": "",
+                    "pTab": kwargs["ptab"],
+                }
+                kwargs["list_form"] = list_form
+                kwargs["detail_form"] = detail_form
+                yield FormRequest(
+                    url=self.base_url + self.tab[kwargs["tab"]]["pagination"],
+                    formdata=list_form,
+                    callback=self.event_list_more,
+                    errback=self.errback,
+                    cb_kwargs=kwargs,
+                    dont_filter=True,
+                )
 
             case _:
                 raise ValueError("Invalid tab")
+
+    def event_list_more(self, response: HtmlResponse, **kwargs) -> Request:
+        soup = BeautifulSoup(response.text, "html.parser")
+        cur_page = soup.select_one("#listPage")
+        if not cur_page:
+            self.logger.error("No page in {}".format(response.url))
+            raise ValueError("No page in {}".format(response.url))
+        cur_page = cur_page["value"]
+        cur_size = soup.select_one("#listCnt")
+        if not cur_size:
+            self.logger.error("No size in {}".format(response.url))
+            raise ValueError("No size in {}".format(response.url))
+        cur_size = cur_size["value"]
+        if int(cur_size) == 0:
+            # No more items
+            return
+        items = soup.select("li")[:-1]
+        kwargs["detail_form"]["intPageSize"] = kwargs["list_form"]["intPageSize"]
+        kwargs["detail_form"]["listCnt"] = cur_size
+        kwargs["detail_form"]["listPage"] = cur_page
+
+        yield from self.parse_event_items(items, kwargs["detail_form"], **kwargs)
+
+        kwargs["list_form"]["intCurrPage"] = cur_page
+
+        yield FormRequest(
+            url=self.base_url + self.tab[kwargs["tab"]]["pagination"],
+            formdata=kwargs["list_form"],
+            callback=self.event_list_more,
+            errback=self.errback,
+            cb_kwargs=kwargs,
+            dont_filter=True,
+        )
 
     def extract_metainfos(self, item):
         event_tags = item.select(".tag_list_01 > li")
@@ -255,6 +294,23 @@ class SevenElevenWebSpider(Spider):
         crawl_id = item.select_one("a")["href"]
         crawl_id = re.search(r"fncGoView\('(.+)'\)", crawl_id).group(1)
         return crawl_id, event_tags
+
+    def parse_event_items(self, items, detail_form, **kwargs):
+        for item in items:
+            crawl_id, event_tags = self.extract_metainfos(item)
+            detail_form["pCd"] = crawl_id
+            yield FormRequest(
+                url=self.base_url + self.tab[kwargs["tab"]]["detail"],
+                formdata=detail_form,
+                callback=self.parse,
+                errback=self.errback,
+                cb_kwargs={
+                    "events": event_tags,
+                    "crawl_id": crawl_id,
+                    "category": None,
+                },
+                dont_filter=True,
+            )
 
     def parse(self, response: HtmlResponse, **kwargs) -> ItemType:
         soup = BeautifulSoup(response.text, "html.parser")
