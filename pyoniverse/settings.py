@@ -50,19 +50,28 @@ DOWNLOAD_DELAY = 1
 # }
 
 # scrapy-fake-useragent 설정(Recommended 를 따름) - https://pypi.org/project/scrapy-fake-useragent/
+# DOWNLOADER_MIDDLEWARES = {
+#     "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
+#     # 'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+#     "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 400,
+#     # 'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
+# }
+#
+# FAKEUSERAGENT_PROVIDERS = [
+#     "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
+#     "scrapy_fake_useragent.providers.FakerProvider",
+#     "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
+# ]
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
+
+# Custom UA Middlewares
 DOWNLOADER_MIDDLEWARES = {
     "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
-    # 'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-    "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 400,
-    # 'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
+    "pyoniverse.middlewares.random_ua.RandomUserAgentMiddleware": 400,
+    "pyoniverse.middlewares.retry_ua.RetryRandomUserAgentMiddleware": 401,
+    "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
 }
-
-FAKEUSERAGENT_PROVIDERS = [
-    "scrapy_fake_useragent.providers.FakeUserAgentProvider",  # this is the first provider we'll try
-    "scrapy_fake_useragent.providers.FakerProvider",
-    "scrapy_fake_useragent.providers.FixedUserAgentProvider",  # fall back to USER_AGENT value
-]
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko)"
+USER_AGENT_TYPE = "mobile"  # mobile, desktop
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
