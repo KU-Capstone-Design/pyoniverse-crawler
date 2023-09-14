@@ -26,7 +26,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -74,7 +74,8 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "pyoniverse.pipelines.validator.ValidationPipeline": 100,
-    "pyoniverse.pipelines.db.MongoDBPipeline": 200,
+    "pyoniverse.pipelines.image.S3ImagePipeline": 200,
+    "pyoniverse.pipelines.db.MongoDBPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -123,3 +124,8 @@ STAGE = os.getenv("STAGE")
 
 # LOG
 LOG_FILE_APPEND = False
+
+# Image
+IMAGES_STORE = "s3://pyoniverse-image/"  # bucket, prefix = IMAGE_STORE[5:].split("/")
+IMAGES_MIN_HEIGHT = 360
+IMAGES_MIN_WIDTH = 360
