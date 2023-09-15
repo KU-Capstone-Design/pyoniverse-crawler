@@ -1,303 +1,420 @@
-<!DOCTYPE html><html lang="ko"><head>	<meta http-equiv="content-Type" content="text/html; charset=utf-8" />	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=yes" />	<title>CU브랜드 모바일</title>	<link rel="stylesheet" type="text/css" href="/m/css/board.css" />		<link rel="stylesheet" type="text/css" href="/m/css/swiper.min.css" />	<link rel="stylesheet" type="text/css" href="/m/css/common_new.css" />	<link rel="stylesheet" type="text/css" href="/m/css/new_layout.css?ver=1.1" />	<link rel="stylesheet" type="text/css" href="/m/css/font.css" media="all"/>	<script type="text/javascript" src="/m/js/jquery-1.8.0.min.js"></script>	<script type="text/javascript" src="/m/js/jquery-ui-1.10.3.custom.min.js"></script>		<script type="text/javascript" src="/m/js/iscroll.js"></script>		<script type="text/javascript" src="/m/js/slider_menu.js"></script>	<script type="text/javascript" src="/m/js/jquery.slider.js"></script>	<!-- 리뉴얼 js -->	<script type="text/javascript" src="/m/js/swiper.min.js"></script> <!-- Swiper JS -->	<script type="text/javascript" src="/m/js/ui.common.js"></script>	<!-- 구글통계 -->	<script type="text/javascript">	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');	  ga('create', 'UA-50424839-19', 'bgfretail.com');	  ga('send', 'pageview');	</script></head><style>	.AjaxLoading { display:none; position:fixed; left:0; top:0; width:100%; height:100%; z-index:1000;}	.AjaxLoading .bg { position:absolute; left:0; top:0; z-index:1001; width:100%; height:100%; background:#000; opacity:0.6; filter:alpha(opacity=30);}	.AjaxLoading .ico { position:absolute; left:0; top:0; z-index:1002; width:100%; height:100%; background:url("/m/images/common/loading.gif") no-repeat center center;}</style><Script>function mallMove(){	document.mallform.target="_blank";	document.mallform.submit();}function getCoo( name ) { 	var nameOfCookie = name + "=";		var x = 0;	while ( x <= document.cookie.length ) {		var y = (x+nameOfCookie.length);				if ( document.cookie.substring( x, y ) == nameOfCookie )  {			if ( (endOfCookie=document.cookie.indexOf( ";", y )) == -1 ) {				endOfCookie = document.cookie.length;			}			return unescape( encodeURI(encodeURIComponent(document.cookie.substring( y, endOfCookie ))) );		}		x = document.cookie.indexOf( " ", x ) + 1; 				if ( x == 0 ) { 			break; 		}	}		return ""; }function CallLoading() {	var Loading = $('.AjaxLoading');		Loading.fadeIn(200);}function RemoveLoading() {	var Loading = $('.AjaxLoading');		Loading.fadeOut(200);}// 로그인 후 Redirectfunction LoginToRedirect(url){	if(url == "") url = location.href;	//document.location.href="https://apmember.bgfretail.com/login?service="+encodeURIComponent(url)+"&skin=mobile&_preferred_site_type_=mobile";	document.location.href="https://www.pocketcu.co.kr/login?referer_url="+encodeURIComponent(url)+"&skin=mobile&_preferred_site_type_=mobile";}function login(){	//document.location.href="https://apmember.bgfretail.com/login?service="+encodeURIComponent(location.href);	document.location.href="https://www.pocketcu.co.kr/login?referer_url="+encodeURIComponent(location.href);}$(document).ready(function(){	if(getCoo("encStr") != ""){		$('#user_id').val(getCoo("encStr"));// 		$('#mall').html('<a href="https://cumall.benepia.co.kr/login/ssoLogin.do?user_id='+getCoo("encStr")+'">CU몰</a>');		$('#mall').html('<a href="javascript:mallMove();">CU몰</a>');	}	$.ajax({		type:"post",		url: "/monthMenuViewYn.do",		dataType: 'json',		success: function(data){			var url = "/event/month.do";			if(data.status == 'Y') {				var tophtml = '<li><a href="'+url+'">이달의 행사</a></li>';				$('#depth2').append(tophtml);			}		},		error : function(data){		}	});});</Script><div class="AjaxLoading"><div class="bg"></div><div class="ico"></div></div><header id="header" class="sub">
+
+					<!-- <div class="conSection" id="listDiv">
+						<div class="img_list img_list_01 img_list_01_02">
+							<ul>
+									<li><span class="img_list_tit_02">7-Select</span></li> -->
+
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_07'>2+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/upload/product/8801069/415024.1.jpg"  alt="PB)마쉼아메리카노320ml"  onload="Fn_ResizeImg(this,'163','130');"/>
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)마쉼아메리카노320ml</div>
+																	<div class='price' style=''>
+																	<span>2,600</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)마쉼아메리카노320ml</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)마쉼아메리카노320ml</dd>
+																<dd class="price_list">
+
+																	<span>2,600</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('062386');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
 
 
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_06'>1+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/upload/product/8801069/417707.1.jpg"  alt="PB)테일러골든캐러멜250ml"  onload="Fn_ResizeImg(this,'163','130');"/>
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)테일러골든캐러멜250ml</div>
+																	<div class='price' style=''>
+																	<span>3,300</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)테일러골든캐러멜250ml</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)테일러골든캐러멜250ml</dd>
+																<dd class="price_list">
+
+																	<span>3,300</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('062528');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
 
 
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_06'>1+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/upload/product/8801069/417714.1.jpg"  alt="PB)테일러카페데이지250ml"  onload="Fn_ResizeImg(this,'163','130');"/>
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)테일러카페데이지250ml</div>
+																	<div class='price' style=''>
+																	<span>3,300</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)테일러카페데이지250ml</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)테일러카페데이지250ml</dd>
+																<dd class="price_list">
+
+																	<span>3,300</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('062529');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
 
 
-<!-- mobile 운영_상단배너 TPO, 상단 배너--->
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_06'>1+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/front/img/product/product_list_01.jpg"  alt="디폴트 이미지" onload="Fn_ResizeImg(this,'163','130');" />
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)앙리마티스카페라떼250ml</div>
+																	<div class='price' style=''>
+																	<span>3,200</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)앙리마티스카페라떼250ml</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)앙리마티스카페라떼250ml</dd>
+																<dd class="price_list">
+
+																	<span>3,200</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('062575');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
 
 
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_06'>1+1</li>
+																	<li class="ico_tag_04">PB</li>
 
-<!--// mobile 운영_상단배너 TPO, 상단 배너- -->
+															</ul>
+															<div class="pic_product">
 
-<div class="inner_wrap">
+															<div class="pic_product">
 
+																<img src="/front/img/product/product_list_01.jpg"  alt="디폴트 이미지" onload="Fn_ResizeImg(this,'163','130');" />
 
-	<div class="menu_util">
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)앙리마티스바닐라라떼250ml</div>
+																	<div class='price' style=''>
+																	<span>3,200</span>
+																	</div>
+																</div>
+															</div>
 
-		<a href="#" class="toggle_menu">
-			<img src="/m/images/common/new/btn_menu_ico.png" alt="메뉴" width="20">
-		</a>
-	</div>
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)앙리마티스바닐라라떼250ml</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)앙리마티스바닐라라떼250ml</dd>
+																<dd class="price_list">
 
+																	<span>3,200</span>
 
-
-	<!-- toggle menu -->
-	<div class="menu_wrap" >
-		<div class="inner_wrap">
-			<div class="member">
-
-
-
-						<a href="javascript:login()" class="btn_login"><em class="txt">로그인</em></a>
-
-
-				<a href="#" class="toggle_close"><img src="/m/images/common/new/btn_gnb_close.png" alt="메뉴 닫기" width="20"></a>
-			</div>
-
-			<div class="gnb_wrap">
-				<!-- gnb menu -->
-				<nav class="gnb_menu">
-					<ul class="category">
-						<li>
-							<a href="#none" class="menu_depth1">CU소개</a>
-							<div class="sub_depth">
-								<ul>
-									<li><a href="/brand_info/story.do?category=brand_info&sf=N">브랜드 스토리</a></li>
-									<li><a href="/brand_info/photo_winner.do?category=brand_info&depth2=3&sf=N&year=2023">CU 갤러리</a></li>
-
-								</ul>
-							</div>
-						</li>
-						<li>
-							<a href="#none" class="menu_depth1">상품&#183;서비스</a>
-							<div class="sub_depth">
-								<ul>
-									<li><a href="/product/product.do?category=product&depth2=4&sf=N">전체상품</a></li>
-									<li><a href="/product/pb.do?category=product&depth2=1&sf=N">CU 차별화 상품</a></li>
-									<li><a href="/event/plus.do?category=event&depth2=1&sf=N">행사상품</a></li>
-
-									<li><a href="/service/index.do?category=service&depth3=4&sf=N">생활편의 서비스</a></li>
-									<li><a href="/service/credit_info.do?category=service&depth2=2&sf=N">제휴카드</a></li>
-								</ul>
-							</div>
-						</li>
-						<li>
-							<a href="/store/list.do?category=store" class="menu_depth1">매장안내</a>
-						</li>
-
-						<li>
-							<a href="#none" class="menu_depth1">멤버십</a>
-							<div class="sub_depth">
-								<ul>
-									<li><a href="/membership/mbership_info.do?category=membership_info&depth2=1" >멤버십 소개</a></li>
-
-									<li><a href="https://www.pocketcu.co.kr" target="_blank">포켓 CU</a></li>
-
-								</ul>
-							</div>
-						</li>
-
-						<li>
-							<a href="#none" class="menu_depth1">창업&#183;상생</a>
-							<div class="sub_depth">
-								<ul>
-									<li><a href="/franchise/understand_01.do?category=franchise&depth2=1&depth3=1&sf=N">사업의 이해</a></li>
-									<li><a href="/franchise/guide_05.do?category=franchise&depth2=7&depth3=1&sf=N">가맹조건</a></li>
-									<li><a href="/franchise/presentation_area.do?category=franchise&depth2=3&depth3=1&sf=N">창업설명회</a></li>
-									<li><a href="/franchise/successList.do?category=franchise&depth2=5&depth3=1&sf=N">창업성공기</a></li>
-									<li><a href="/franchise/store_01_list.do?category=franchise&depth2=6&depth3=1&sf=N">점포물건</a></li>
-									<li><a href="/benefit/index.do?category=benefit&sf=N">상생혜택</a></li>
-									<li><a href="/enter/info_01.do?category=enter&sf=N">거래상담</a></li>
-								</ul>
-							</div>
-						</li>
-						<li>
-							<a href="#none" class="menu_depth1">새로운소식</a>
-							<div class="sub_depth">
-								<ul>
-									<li><a href="/brand_info/news_list.do?category=brand_info&depth2=4&sf=N">CU소식</a></li>
-
-									<li><a href="https://www.pocketcu.co.kr/event/main" target="_blank">이벤트</a></li>
-									<!-- 20230829 숨김요청처리  -->
-								</ul>
-							</div>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</div>
-		<div class="common_menu">
-			<ul class="site_link">
-				<li><a href="http://owner.bgfretail.com/noIndex.do" target="_blank" class="type1">점주광장</a></li>
-
-				<li><a href="https://www.pocketcu.co.kr/auth/owner" target="_blank" class="type2">점주인증</a></li>
-				<li><a href="https://www.pocketcu.co.kr/auth/emp" target="_blank" class="type3">임직원인증</a></li>
-			</ul>
-			<div class="link_wrap">
-				<a href="/store/list.do?category=store" class="store_link">
-					<div class="info_wrap">
-						매장안내
-					</div>
-				</a>
-				<a href="https://cs.bgfretail.com/index.jsp" class="customer_link" target="_blank">
-					<div class="info_wrap">
-						고객센터
-						<p class="txt">
-							1577-8007 <br />
-							평일 09시:00 - 21:00
-						</p>
-					</div>
-				</a>
-			</div>
-		</div>
-	</div>
-	<!-- //toggle menu -->
-
-</div>	</header>
-
-<link rel="stylesheet" type="text/css" href="/m/css/product.css" /><script type="text/javaScript" language="javascript" defer="defer">//<![CDATA[	function golist(){		history.back();	}//]]></script><body>	<div id="wrapIn">		<!-- contents -->		<div id="contents" class="product_view">			<div class="tit_h3">				<a href="javascript:history.back();">이전 페이지로 이동</a>				<h3>상품소개</h3>			</div>			<div class="product_full">				<div class="visual">					<span class="product_img">						<img src="//tqklhszfkvzk6518638.cdn.ntruss.com/product/8801771028659.jpg" alt="8801771028659.jpg" /></span>					<span class="icon">																<i><img src="/m/images/icon/icon_new.png" alt="NEW" /></i>										</span>				</div>				<div class="product_info">					<h4>샌)초당옥수수크림샌드</h4>					<ul>										</ul>					<hr />					<p class="price">3,000<span class="unit">원</span></p>										<p class="txtBox">초당옥수수크림에 스위트콘을 넣어  햄치즈와 단짠단짠하게 먹는  디저트 샌드위치</p>				</div>			</div>					</div>		<!--// contents -->
-
-<script type="text/javascript">
-    function viewChange() {
-        /*
-        $.ajax({
-            url: "/brand_info/viewType.do",
-            async:false,
-            success:function(data){
-                location.reload();
-            },
-            error: function(request, status, error) {
-                location.reload();
-            }
-        });
-        */
-        location.href = "/index.do?mobile=Y";
-    }
-
-    function goFamilySite() {
-
-    	var val = $("#selectSite option:selected").val();
-
-    	if(val =="CU_MALL"){
-    		// CU 몰일 경우
-    		$("#benepiaMobileForm").submit();
-    	}else{
-    		// CU 몰이 아닐 경우
-    		window.open($('select.select_family option:selected').val());
-    	}
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('062576');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
 
 
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_07'>2+1</li>
+																	<li class="ico_tag_04">PB</li>
 
-    }
-</script>
+															</ul>
+															<div class="pic_product">
 
-<footer id="footer">
-    <section class="footer_wrap">
-        <div class="cu_info_footer">
-            <div class="logo_wrap">
-                <h2 class="logo">
-                    <a href="/index.do"><span class="blind"><!--CU--></span></a>
-                </h2>
-            </div>
-        </div>
-        <div class="quick_menu">
-            <nav class="quick_menu_box">
-                <ul class="footer_ulcnt">
-                    <li><a href="/enter/info_01.do?category=enter&sf=N">거래상담</a></li>
-                    <li><a href="#none" class="btn_layer" open-layer-class="ad_inquiry">제휴/광고 문의</a></li>
-                    <!-- issues/2776 추가 -->
-                    <li><a href="/store/list.do? category=store&sf=N">매장찾기</a></li>
-                    <li><a href="http://etax.bgfretail.com/index.jsp" target="_blank">전자세금계산서</a></li>
+															<div class="pic_product">
 
-                    <li><a href="https://www.pocketcu.co.kr/auth/emp" target="_blank">임직원인증</a></li>
+																<img src="/upload/product/8801492/384072.1.jpg"  alt="PB)닭가슴살리얼바허브80g"  onload="Fn_ResizeImg(this,'163','130');"/>
 
-                </ul>
-                <ul class="footer_ulcnt">
-                    <li><a href="http://mkr.bgfretail.com/" target="_blank">발주 및 배송데이터</a></li>
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)닭가슴살리얼바허브80g</div>
+																	<div class='price' style=''>
+																	<span>2,900</span>
+																	</div>
+																</div>
+															</div>
 
-                    <li class="footer_bold"><a href="https://www.pocketcu.co.kr/policy/policy/privacyPolicy"
-                                               target="_blank">개인정보처리방침</a></li>
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)닭가슴살리얼바허브80g</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">2</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)닭가슴살리얼바허브80g</dd>
+																<dd class="price_list">
 
+																	<span>2,900</span>
 
-
-                    <li><a href="https://www.pocketcu.co.kr/auth/owner" target="_blank">점주인증</a></li>
-                    <li><a href="https://www.pocketcu.co.kr/auth/memp" target="_blank">지주사인증</a></li>
-                    <li><a href="https://www.pocketcu.co.kr/auth/semp" target="_blank">계열사인증</a></li>
-
-                </ul>
-            </nav>
-        </div>
-
-        <!-- 위치변경 -->
-        <address class="footer_address">
-            <p> BGF리테일 서울시 강남구 테헤란로 405(삼성동)</p>
-            <p class="copy_right">COPYRIGHT &copy; BGFretail ALL RIGHT RESERVED.</p>
-        </address>
-        <p class="footer_tel">TEL: 1577-8007</p>
-
-        <!-- 관련사이트 탭 만들기 -->
-        <div class="select_wrap">
-            <select title="관련사이트" id="selectSite" class="select_family family_site" onchange="goFamilySite();">
-                <option value="https://www.bgf.co.kr">관련사이트</option>
-                <option value="http://www.bgf.co.kr/m">BGF</option>
-                <option value="http://www.bgfretail.com/companyM/main.do">BGF리테일</option>
-                <option value="https://www.pocketcu.co.kr">포켓CU</option>
-                <option value="http://www.bgfnetworks.com/">BGF네트웍스</option>
-                <option value="http://www.bgfhumannet.com/">BGF휴먼넷</option>
-                <option value="http://www.bgflogis.com/">BGF로지스</option>
-                <option value="https://www.cupost.co.kr/postbox/main.cupost">CU포스트</option>
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('073456');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
 
 
-            </select>
-        </div>
-    </section>
-    <!-- 리뉴얼 푸터 -->
-</footer>
-<!-- footer-->
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_06'>1+1</li>
+																	<li class="ico_tag_04">PB</li>
 
-<!-- [팝업]제휴/광고 문의 --> <!-- issues/2776 추가 -->
-<section class="ad_inquiry layer_pop" style="display:none;">
-    <a href="#none" class="closed">
-        <span class="blind">팝업 닫기</span>
-    </a>
-    <!-- 컨텐츠 -->
-    <div class="contents">
-        <section class="inquiry_info">
-            <h2 class="tit">제휴·광고 문의</h2>
-            <div class="txt">
-                일상 가장 가까운 곳에서 <br>
-                언제 어디서나 만날 수 있는 CU와 함께 해보세요!<br><br>
+															</ul>
+															<div class="pic_product">
 
-                아래 주소로 이름, 소속(회사명), 연락처, 문의내용을 <br>
-                보내주시면 연락드리겠습니다.
-            </div>
-            <div class="inquiry_box">
-                <ul>
-                    <!-- issues/3831 수정 및 추가 -->
-					<li>
-						<p>온라인 제휴/광고<span>(포켓CU 앱, 멤버십)</span></p>
-						<div class="info_wrap">
-							<a href="mailto:ejlee2198@bgf.co.kr">ejlee2198@bgf.co.kr</a>
-						</div>
-					</li>
-					<li>
-						<p>마케팅 제휴</p>
-						<div class="info_wrap">
-							<a href="mailto:scottjeon.sj@bgf.co.kr">scottjeon.sj@bgf.co.kr</a>
-						</div>
-					</li>
-					<li>
-						<p>SNS 콘텐츠 제휴/광고<span>(유튜브, 인스타그램 등)</span></p>
-						<div class="info_wrap">
-							<a href="mailto:iff4uss@bgf.co.kr">iff4uss@bgf.co.kr</a>
-						</div>
-					</li>
-					<li>
-						<p>생활 서비스 제휴</p>
-						<div class="info_wrap">
-							<a href="mailto:aaabbb1315@bgf.co.kr">aaabbb1315@bgf.co.kr</a>
-						</div>
-					</li>
-					<li>
-						<p>팝업스토어 제안<span>(브랜드콜라보)</span></p>
-						<div class="info_wrap">
-							<a href="mailto:cvic11@bgf.co.kr">cvic11@bgf.co.kr</a>
-						</div>
-					</li>
-					<li>
-						<p>콜라보 상품 제안</span></p>
-						<div class="info_wrap">
-							<a href="mailto:xurykim@bgf.co.kr">xurykim@bgf.co.kr</a>
-							<a href="mailto:hg991103@bgf.co.kr">hg991103@bgf.co.kr</a>
-						</div>
-					</li>
-					<!--// issues/3831 수정 및 추가 -->
-                    </li>
-                </ul>
-            </div>
-        </section>
-    </div>
-</section>
-<!--// [팝업]제휴/광고 문의 -->	</div></body></html>
+															<div class="pic_product">
+
+																<img src="/front/img/product/product_list_01.jpg"  alt="디폴트 이미지" onload="Fn_ResizeImg(this,'163','130');" />
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)을지로촙촙면270g</div>
+																	<div class='price' style=''>
+																	<span>3,900</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)을지로촙촙면270g</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)을지로촙촙면270g</dd>
+																<dd class="price_list">
+
+																	<span>3,900</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('073512');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
+
+
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_06'>1+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/front/img/product/product_list_01.jpg"  alt="디폴트 이미지" onload="Fn_ResizeImg(this,'163','130');" />
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)을지로촙촙면270g</div>
+																	<div class='price' style=''>
+																	<span>3,900</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)을지로촙촙면270g</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)을지로촙촙면270g</dd>
+																<dd class="price_list">
+
+																	<span>3,900</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('073512');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
+
+
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_07'>2+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/upload/product/8801492/385376.1.jpg"  alt="PB)그릴치킨오리바80g"  onload="Fn_ResizeImg(this,'163','130');"/>
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)그릴치킨오리바80g</div>
+																	<div class='price' style=''>
+																	<span>2,900</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)그릴치킨오리바80g</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">0</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)그릴치킨오리바80g</dd>
+																<dd class="price_list">
+
+																	<span>2,900</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('073566');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
+
+
+														<li>
+															<ul class="tag_list_01">
+																<li class='ico_tag_07'>2+1</li>
+																	<li class="ico_tag_04">PB</li>
+
+															</ul>
+															<div class="pic_product">
+
+															<div class="pic_product">
+
+																<img src="/upload/product/8809296/882916.1.jpg"  alt="PB)강릉교동반점짬뽕(직화)"  onload="Fn_ResizeImg(this,'163','130');"/>
+
+																<div class='infowrap'>
+																	<div class='name' style=''>PB)강릉교동반점짬뽕(직화)</div>
+																	<div class='price' style=''>
+																	<span>1,900</span>
+																	</div>
+																</div>
+															</div>
+
+															</div>
+															<dl class="product_content">
+																<dt><span class="tit_product">PB)강릉교동반점짬뽕(직화)</span>
+																	<span class="like_wrap_01">
+																	<span class="ico_like_01"><span class="hide">좋아요</span></span>
+																	<span class="ico_like_02">
+																		<span class="ico_like_02_in">1</span>
+																	</span>
+																</span>
+																</dt>
+																<dd class="txt_product">PB)강릉교동반점짬뽕(직화)</dd>
+																<dd class="price_list">
+
+																	<span>1,900</span>
+
+																</dd>
+															</dl>
+															<a href="javascript: fncGoView('132308');" class="btn_product_01"><span class="hide">상품 상세정보 바로가기</span></a>
+														</li>
+
+
+								<li class="btn_more" id="moreImg"><a href="javascript: fncMore('5');"><span>MORE</span></a></li>
+
+								<input type="hidden" id="listCnt" name="listCnt" value="23" title="실제 뿌려진 리스트 수" />
+								<input type="hidden" id="listPage" name="listPage" value="3" title="페이지 수" />

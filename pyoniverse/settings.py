@@ -71,7 +71,7 @@ DOWNLOADER_MIDDLEWARES = {
     "pyoniverse.middlewares.retry_ua.RetryRandomUserAgentMiddleware": 401,
     "scrapy.downloadermiddlewares.retry.RetryMiddleware": None,
 }
-USER_AGENT_TYPE = "mobile"  # mobile, desktop
+USER_AGENT_TYPE = "desktop"  # mobile, desktop
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
