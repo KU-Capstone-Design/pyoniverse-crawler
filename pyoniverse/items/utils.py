@@ -56,6 +56,8 @@ def convert_brand(brand: str) -> int:
             return 2
         case "SEVEN ELEVEN":
             return 3
+        case "EMART24":
+            return 4
         case _:
             raise ValueError(f"Unknown brand: {brand!r}")
 
