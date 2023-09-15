@@ -28,8 +28,8 @@ class Emart24WebSpider(Spider):
     custom_settings = {"USER_AGENT_TYPE": "mobile"}
     lists = {
         "event": "/goods/event",
-        # "PB": "/goods/pl",
-        # "Fresh": "/goods/ff",
+        "PB": "/goods/pl",
+        "Fresh": "/goods/ff",
     }
     event = {
         "1+1": "1+1",
@@ -39,26 +39,46 @@ class Emart24WebSpider(Spider):
         "덤증정": "GIFT",
     }
     categories = {
-        "도시락": "LUNCHBOX",
-        "김밥": "KIMBAP",
-        "햄버거": "SANDWICH",
-        "주먹밥": "KIMBAP",
-        "샌드위치": "SANDWICH",
+        "도시락": {
+            "category_seq": "8",
+            "category": "LUNCHBOX",
+        },
+        "김밥": {
+            "category_seq": "9",
+            "category": "KIMBAP",
+        },
+        "햄버거": {"category_seq": "10", "category": "SANDWICH"},
+        "주먹밥": {"category_seq": "41", "category": "KIMBAP"},
+        "샌드위치": {"category_seq": "42", "category": "SANDWICH"},
+        "즉석식": {"category_seq": "41", "category": "FOOD"},
     }
-    pagination_url = (
-        base_url + "{list_path}?search=&page={page}&category_seq={category_seq}&align="
-    )
+    pagination_url = base_url + "{list_path}?search=&category_seq={category_seq}&align="
 
     def start_requests(self):
         yield Request(url=self.base_url, callback=self.enter_main)
 
     def enter_main(self, response):
         for tab, path in self.lists.items():
-            yield Request(
-                url=self.base_url + path,
-                callback=self.parse_list,
-                cb_kwargs={"tab": tab},
-            )
+            match tab:
+                case "Fresh":
+                    for value in self.categories.values():
+                        category = value["category"]
+                        category_seq = value["category_seq"]
+                        yield Request(
+                            url=self.pagination_url.format(
+                                list_path=path,
+                                category_seq=category_seq,
+                            ),
+                            callback=self.parse_list,
+                            cb_kwargs={"tab": tab, "category": category},
+                        )
+
+                case _:
+                    yield Request(
+                        url=self.base_url + path,
+                        callback=self.parse_list,
+                        cb_kwargs={"tab": tab},
+                    )
 
     def parse_list(self, response: HtmlResponse, **kwargs) -> Request:
         soup = BeautifulSoup(response.text, "html.parser")
@@ -66,6 +86,13 @@ class Emart24WebSpider(Spider):
         kwargs["url"] = response.url
         match kwargs["tab"]:
             case "event":
+                for item in items:
+                    yield from self.parse_item(item, **kwargs)
+            case "PB":
+                kwargs["event"] = "PB"
+                for item in items:
+                    yield from self.parse_item(item, **kwargs)
+            case "Fresh":
                 for item in items:
                     yield from self.parse_item(item, **kwargs)
             case _:
@@ -89,6 +116,8 @@ class Emart24WebSpider(Spider):
                     continue
             events.append(tag.text.strip())
         events = [self.event[e] for e in events]
+        if kwargs.get("event"):
+            events.append(kwargs["event"])
 
         try:
             img = item.select_one(".itemImg > img")
