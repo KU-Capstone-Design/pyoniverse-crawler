@@ -305,9 +305,13 @@ class SevenElevenWebSpider(Spider):
                 discounted_price = soup.select_one(
                     ".product_price > strong"
                 ).text.strip()
-                price = soup.select_one(".product_price > del").text.strip()
                 discounted_price = float(re.sub(r"\D", "", discounted_price))
-                price = float(re.sub(r"\D", "", price))
+                try:
+                    price = soup.select_one(".product_price > del").text.strip()
+                    price = float(re.sub(r"\D", "", price))
+                except Exception:
+                    # Discounted Price 가 없다면 Price 와 Discounted Price 를 동일하게 맞춘다.
+                    price = discounted_price
             else:
                 price = soup.select_one(".product_price > strong").text.strip()
                 price = float(re.sub(r"\D", "", price))
