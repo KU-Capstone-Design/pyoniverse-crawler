@@ -16,6 +16,11 @@ from pyoniverse.items.utils import convert_brand, convert_currency, convert_even
 class CUWebSpider(Spider):
     name = "cuweb"
     brand = "CU"
+
+    custom_settings = {
+        "USER_AGENT_TYPE": "desktop",
+    }
+
     allowed_domains = ["cu.bgfretail.com"]
     base_url = "https://cu.bgfretail.com/index.do"
     list_base_url = "https://cu.bgfretail.com/product/productAjax.do"

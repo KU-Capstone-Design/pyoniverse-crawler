@@ -8,7 +8,7 @@ from typing import List
 from scrapy import Request
 from scrapy.exceptions import DropItem, ScrapyDeprecationWarning
 from scrapy.pipelines.files import S3FilesStore
-from scrapy.pipelines.images import ImageException, ImagesPipeline
+from scrapy.pipelines.images import ImagesPipeline
 from scrapy.utils.misc import md5sum
 from scrapy.utils.python import get_func_args
 
@@ -59,9 +59,9 @@ class S3ImagePipeline(ImagesPipeline):
         """
         store: S3FilesStore = self.store
         for ok, value in results:
-            # Webp 로 변환
-            path = Path(value["path"]).with_suffix(".webp")
             if ok:
+                # Webp 로 변환
+                path = Path(value["path"]).with_suffix(".webp")
                 if value["url"] == item.image.thumb:
                     if store.prefix:
                         item.image.thumb = f"s3://{store.bucket}/{store.prefix}/{path}"
@@ -119,10 +119,15 @@ class S3ImagePipeline(ImagesPipeline):
 
         width, height = orig_image.size
         if width < self.min_width or height < self.min_height:
-            raise ImageException(
-                "Image too small "
+            orig_image = orig_image.resize(
+                (max(width, self.min_width), max(height, self.min_height)),
+                reducing_gap=3.0,
+            )
+            self.logger.warning(
+                f"Image too small "
                 f"({width}x{height} < "
-                f"{self.min_width}x{self.min_height})"
+                f"{self.min_width}x{self.min_height}), "
+                f"resized to ({orig_image.width}x{orig_image.height})"
             )
         if self._deprecated_convert_image is None:
             self._deprecated_convert_image = "response_body" not in get_func_args(

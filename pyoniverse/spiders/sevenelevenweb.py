@@ -25,6 +25,10 @@ class SevenElevenWebSpider(Spider):
     allowed_domains = ["www.7-eleven.co.kr"]
     base_url = "https://www.7-eleven.co.kr"
 
+    custom_settings = {
+        "USER_AGENT_TYPE": "desktop",
+    }
+
     tab = {
         "Fresh Food": {
             "main": "/product/bestdosirakList.asp",
@@ -40,16 +44,6 @@ class SevenElevenWebSpider(Spider):
             "pagination": "/product/listMoreAjax.asp",
             "detail": "/product/presentView.asp",
         },
-    }
-
-    custom_settings = {
-        # Fake User Agent Middleware 사용 X
-        "DOWNLOADER_MIDDLEWARES": {
-            # "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
-            # 'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-            # "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 400,
-            # 'scrapy_fake_useragent.middleware.RetryUserAgentMiddleware': 401,
-        }
     }
 
     def start_requests(self):
@@ -126,23 +120,6 @@ class SevenElevenWebSpider(Spider):
                         )
                 case _:
                     raise ValueError("Invalid tab")
-
-    def form_list(self, response: HtmlResponse, **kwargs) -> Request:
-        soup = BeautifulSoup(response.text, "html.parser")
-        data = soup.select_one("#actFrm > input")
-        if data is None:
-            self.logger.error("No data in {}".format(response.url))
-            raise ValueError("No data in {}".format(response.url))
-        data = data.attrs
-        data = {data["name"]: data["value"]}
-        yield FormRequest.from_response(
-            response,
-            formid="actFrm",
-            formdata=data,
-            callback=self.parse_list,
-            errback=self.errback,
-            cb_kwargs=kwargs,
-        )
 
     def parse_list(self, response: HtmlResponse, **kwargs) -> Request:
         soup = BeautifulSoup(response.text, "html.parser")
@@ -236,7 +213,8 @@ class SevenElevenWebSpider(Spider):
                 raise ValueError("Invalid tab")
 
     def event_list_more(self, response: HtmlResponse, **kwargs) -> Request:
-        soup = BeautifulSoup(response.text, "html.parser")
+        html = "<html><body>{}</body></html>".format(response.text)
+        soup = BeautifulSoup(html, "html.parser")
         cur_page = soup.select_one("#listPage")
         if not cur_page:
             self.logger.error("No page in {}".format(response.url))
@@ -250,7 +228,7 @@ class SevenElevenWebSpider(Spider):
         if int(cur_size) == 0:
             # No more items
             return
-        items = soup.select("li")[:-1]
+        items = soup.select("body > li")[:-1]
         kwargs["detail_form"]["intPageSize"] = kwargs["list_form"]["intPageSize"]
         kwargs["detail_form"]["listCnt"] = cur_size
         kwargs["detail_form"]["listPage"] = cur_page
@@ -327,9 +305,13 @@ class SevenElevenWebSpider(Spider):
                 discounted_price = soup.select_one(
                     ".product_price > strong"
                 ).text.strip()
-                price = soup.select_one(".product_price > del").text.strip()
                 discounted_price = float(re.sub(r"\D", "", discounted_price))
-                price = float(re.sub(r"\D", "", price))
+                try:
+                    price = soup.select_one(".product_price > del").text.strip()
+                    price = float(re.sub(r"\D", "", price))
+                except Exception:
+                    # Discounted Price 가 없다면 Price 와 Discounted Price 를 동일하게 맞춘다.
+                    price = discounted_price
             else:
                 price = soup.select_one(".product_price > strong").text.strip()
                 price = float(re.sub(r"\D", "", price))
