@@ -15,8 +15,8 @@ class PriceSchema(Schema):
 
 
 class ImageSchema(Schema):
-    thumb: str = fields.URL(allow_none=True)
-    others: List[str] = fields.List(fields.URL, required=True)
+    thumb: str = fields.URL(allow_none=True, required=True)
+    others: List[str] = fields.List(fields.URL(), required=True)
 
 
 class EventSchema(Schema):
