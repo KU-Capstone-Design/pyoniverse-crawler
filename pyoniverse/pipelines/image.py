@@ -40,7 +40,8 @@ class S3ImagePipeline(ImagesPipeline):
         :param info:
         :return: Request for image
         """
-        yield Request(item.image.thumb)
+        if item.image.thumb:
+            yield Request(item.image.thumb)
         for url in item.image.others:
             yield Request(url)
 
