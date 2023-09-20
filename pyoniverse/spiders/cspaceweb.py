@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup, Tag
 from scrapy import Request, Spider
 from scrapy.exceptions import DropItem
 from scrapy.http import HtmlResponse
+from scrapy.shell import inspect_response
 
 from pyoniverse.items import CrawledInfoVO, EventVO, ImageVO, PriceVO
 from pyoniverse.items.product import ProductVO
@@ -19,6 +20,8 @@ class CspaceWebSpider(Spider):
 
     custom_settings = {
         "USER_AGENT_TYPE": "desktop",
+        "download_delay": 5,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
     }
 
     base_url = "https://www.cspace.co.kr"

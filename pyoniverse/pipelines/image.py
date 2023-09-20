@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List
 
 from scrapy import Request
-from scrapy.exceptions import DropItem, ScrapyDeprecationWarning
+from scrapy.exceptions import ScrapyDeprecationWarning
 from scrapy.pipelines.files import S3FilesStore
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.utils.misc import md5sum
@@ -63,13 +63,21 @@ class S3ImagePipeline(ImagesPipeline):
             if ok:
                 # Webp 로 변환
                 path = Path(value["path"]).with_suffix(".webp")
+                if store.prefix:
+                    url = f"s3://{store.bucket}/{store.prefix}/{path}"
+                else:
+                    url = f"s3://{store.bucket}/{path}"
                 if value["url"] == item.image.thumb:
-                    if store.prefix:
-                        item.image.thumb = f"s3://{store.bucket}/{store.prefix}/{path}"
-                    else:
-                        item.image.thumb = f"s3://{store.bucket}/{path}"
+                    item.image.thumb = url
+                else:
+                    item.image.others = [
+                        o if o != value["url"] else url for o in item.image.others
+                    ]
             else:
-                raise DropItem(f"Image download failed: {value['url']}")
+                self.logger.warning(f"Image download failed: {item}")
+        if item.image.thumb and not item.image.thumb.startswith("s3"):
+            item.image.thumb = None
+        item.image.others = [o for o in item.image.others if not o.startswith("s3")]
         return item
 
     # Webp 저장을 위한 Overrides

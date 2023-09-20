@@ -37,11 +37,12 @@ class Emart24WebSpider(Spider):
         "3+1": "3+1",
         "세일": "DISCOUNT",
         "덤증정": "GIFT",
+        "NEW": "NEW",
     }
     categories = {
         "도시락": {
             "category_seq": "8",
-            "category": "LUNCHBOX",
+            "category": "LUNCH BOX",
         },
         "김밥": {
             "category_seq": "9",
@@ -89,7 +90,7 @@ class Emart24WebSpider(Spider):
                 for item in items:
                     yield from self.parse_item(item, **kwargs)
             case "PB":
-                kwargs["event"] = "PB"
+                kwargs["event"] = "MONOPOLY"
                 for item in items:
                     yield from self.parse_item(item, **kwargs)
             case "Fresh":
