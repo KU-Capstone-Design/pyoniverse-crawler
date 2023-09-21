@@ -116,7 +116,7 @@ class Emart24WebSpider(Spider):
                 if "opacity:0" in style:
                     continue
             events.append(tag.text.strip())
-        events = [self.event[e] for e in events]
+        events = [self.event[re.sub(r"\s+", "", e)] for e in events]
         if kwargs.get("event"):
             events.append(kwargs["event"])
 

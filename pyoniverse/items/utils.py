@@ -43,6 +43,8 @@ def convert_event(event: str) -> int:
         case "DISCOUNT":
             # 할인 이벤트
             return 7
+        case "3+1":
+            return 8
         case _:
             raise ValueError(f"Unknown event: {event!r}")
 
