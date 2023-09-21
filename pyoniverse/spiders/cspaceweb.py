@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup, Tag
 from scrapy import Request, Spider
 from scrapy.exceptions import DropItem
 from scrapy.http import HtmlResponse
-from scrapy.shell import inspect_response
 
 from pyoniverse.items import CrawledInfoVO, EventVO, ImageVO, PriceVO
 from pyoniverse.items.product import ProductVO
@@ -99,14 +98,18 @@ class CspaceWebSpider(Spider):
                 # 이름 외 다른 고유값이 없음(이미지도 없을 수 있기 때문에)
                 id=crawl_id,
                 url=url,
+                brand=convert_brand(self.brand),
             ),
             name=name,
-            price=PriceVO(value=price, currency=convert_currency("KRW")),
+            price=PriceVO(
+                value=price,
+                currency=convert_currency("KRW"),
+                discounted_value=price if "DISCOUNT" in events else None,
+            ),
             image=ImageVO(thumb=img_url),
             events=[
                 EventVO(brand=convert_brand(self.brand), id=convert_event(event))
                 for event in events
             ],
-            discounted_price=price if "DISCOUNT" in events else None,  # 할인 이벤트일 때 가격 기재
         )
         yield product

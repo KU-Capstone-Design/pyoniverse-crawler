@@ -155,11 +155,15 @@ class Emart24WebSpider(Spider):
                 spider=self.name,
                 id=Path(img).stem,
                 url=kwargs["url"],
+                brand=convert_brand(self.brand),
             ),
             name=name,
             image=ImageVO(thumb=img),
-            price=PriceVO(value=price, currency=convert_currency("KRW")),
-            discounted_price=discount_price,
+            price=PriceVO(
+                value=price,
+                currency=convert_currency("KRW"),
+                discounted_value=discount_price,
+            ),
             events=[
                 EventVO(brand=convert_brand(self.brand), id=convert_event(e))
                 for e in events

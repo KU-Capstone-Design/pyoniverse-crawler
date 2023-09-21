@@ -217,6 +217,7 @@ class CUWebSpider(Spider):
                 spider=self.name,
                 id=kwargs["crawl_id"],
                 url=response.url,
+                brand=convert_brand(self.brand),
             ),
             name=product_name,
             price=PriceVO(value=price, currency=convert_currency("KRW")),
