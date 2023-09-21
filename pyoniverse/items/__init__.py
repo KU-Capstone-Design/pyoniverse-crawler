@@ -51,6 +51,10 @@ class PriceVO(ItemVO):
 
 @dataclass(kw_only=True)
 class ImageVO(ItemVO):
+    """
+    size 는 ImagePipeline 에서 채워집니다.
+    """
+
     thumb: str = field(default=None)
     others: List[str] = field(default_factory=list)
     size: dict = field(

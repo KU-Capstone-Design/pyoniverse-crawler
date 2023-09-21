@@ -212,7 +212,10 @@ class Gs25WebSpider(Spider):
 
             product: ProductVO = ProductVO(
                 crawled_info=CrawledInfoVO(
-                    spider=self.name, url=response.url, id=product_id
+                    spider=self.name,
+                    url=response.url,
+                    id=product_id,
+                    brand=convert_brand(self.brand),
                 ),
                 name=product_name,
                 price=PriceVO(value=product_price, currency=convert_currency("KRW")),
@@ -263,7 +266,6 @@ class Gs25WebSpider(Spider):
             if kwargs["srv_food_ck"] == "DifferentServiceKey":
                 events.append("MONOPOLY")
 
-            # TODO : Category 분류는 Batch로 빼기
             category = None
             if kwargs["srv_food_ck"] == "FreshFoodKey":
                 match kwargs["search_product"]:
@@ -353,7 +355,10 @@ class Gs25WebSpider(Spider):
 
             product: ProductVO = ProductVO(
                 crawled_info=CrawledInfoVO(
-                    spider=self.name, url=response.url, id=product_id
+                    spider=self.name,
+                    url=response.url,
+                    id=product_id,
+                    brand=convert_brand(self.brand),
                 ),
                 category=convert_category(category) if category else None,
                 name=product_name,

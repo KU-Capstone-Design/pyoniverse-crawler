@@ -325,13 +325,17 @@ class SevenElevenWebSpider(Spider):
                 spider=self.name,
                 id=kwargs["crawl_id"],
                 url=response.url,
+                brand=convert_brand(self.brand),
             ),
             category=convert_category(kwargs["category"])
             if kwargs.get("category")
             else None,
             name=name,
-            price=PriceVO(value=price, currency=convert_currency("KRW")),
-            discounted_price=discounted_price,
+            price=PriceVO(
+                value=price,
+                currency=convert_currency("KRW"),
+                discounted_value=discounted_price,
+            ),
             image=ImageVO(thumb=img),
             events=[
                 EventVO(brand=convert_brand(self.brand), id=convert_event(e))
@@ -369,6 +373,7 @@ class SevenElevenWebSpider(Spider):
                     spider=self.name,
                     id=Path(img).stem,
                     url=response.url,
+                    brand=convert_brand(self.brand),
                 ),
                 name=name,
                 image=ImageVO(thumb=img),
