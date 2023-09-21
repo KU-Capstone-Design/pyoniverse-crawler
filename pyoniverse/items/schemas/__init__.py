@@ -22,13 +22,21 @@ class ImageSizeSchema(Schema):
 
 
 class ImageSizeMapSchema(Schema):
-    thumb: ImageSizeSchema = fields.Dict(required=True)
-    others: List[dict] = fields.Nested(ImageSizeSchema, required=True, many=True)
+    thumb = fields.Nested(ImageSizeSchema, allow_none=True, required=False)
+    others = fields.Nested(ImageSizeSchema, allow_none=True, required=False, many=True)
 
 
 class ImageSchema(Schema):
-    thumb: str = fields.URL(allow_none=True, required=True)
-    others: List[str] = fields.List(fields.URL(), required=True)
+    thumb: str = fields.URL(
+        allow_none=True,
+        required=True,
+        schemes=["http", "https", "s3"],
+        require_tld=False,
+    )
+    others: List[str] = fields.List(
+        fields.URL(required=True, schemes=["http", "https", "s3"], require_tld=False),
+        required=True,
+    )
     size: dict = fields.Nested(ImageSizeMapSchema, required=True)
 
 

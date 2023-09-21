@@ -82,8 +82,8 @@ USER_AGENT_TYPE = "desktop"  # mobile, desktop
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "pyoniverse.pipelines.validator.ValidationPipeline": 100,
-    "pyoniverse.pipelines.image.S3ImagePipeline": 200,
+    "pyoniverse.pipelines.image.S3ImagePipeline": 100,  # Image Pipeline 에서 추가되는 값이 있기 때문에 Validation 전에 실행
+    "pyoniverse.pipelines.validator.ValidationPipeline": 200,
     "pyoniverse.pipelines.db.MongoDBPipeline": 300,
 }
 

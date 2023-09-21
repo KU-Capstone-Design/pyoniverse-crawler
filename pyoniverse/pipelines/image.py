@@ -187,4 +187,16 @@ class S3ImagePipeline(ImagesPipeline):
                 )
             else:
                 self.logger.debug("Test mode - Image not saved")
+
+            # Image Size 저장 - Persist 이후에 저장해야 함
+            if request.url == item.image.thumb:
+                item.image.size["thumb"] = {"width": width, "height": height}
+            else:
+                # 같은 우선순위끼리는 FIFO로 저장되므로, 순서가 보장됨
+                item.image.size["others"].append(
+                    {
+                        "width": width,
+                        "height": height,
+                    }
+                )
         return checksum
