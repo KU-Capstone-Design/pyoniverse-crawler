@@ -12,6 +12,7 @@ from scrapy.pipelines.images import ImagesPipeline
 from scrapy.utils.misc import md5sum
 from scrapy.utils.python import get_func_args
 
+from pyoniverse.items import EventVO
 from pyoniverse.items.product import ProductVO
 
 
@@ -49,6 +50,8 @@ class S3ImagePipeline(ImagesPipeline):
         path = super().file_path(request, response, info, item=item)
         if isinstance(item, ProductVO):
             prefix = "products"
+        elif isinstance(item, EventVO):
+            prefix = "events"
         else:
             raise ValueError("Invalid item type")
         path = re.sub(r"^full", rf"{prefix}", path)

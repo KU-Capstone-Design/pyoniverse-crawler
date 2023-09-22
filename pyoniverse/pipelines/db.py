@@ -83,6 +83,10 @@ class MongoDBPipeline(BasePipeline):
 
                 # created_at 은 이전 값으로 대체
                 item.created_at = prv_item["created_at"]
+            elif coll == "events":
+                # 이전 이벤트 제거
+                r = self.write_db.get_collection(coll).delete_one(query)
+                spider.logger.info(f"Deleted previous event: {r.deleted_count}")
 
             update = {"$set": asdict(item)}
             res: UpdateResult = self.write_db.get_collection("products").update_one(
