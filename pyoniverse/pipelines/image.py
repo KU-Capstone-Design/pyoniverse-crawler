@@ -141,6 +141,19 @@ class S3ImagePipeline(ImagesPipeline):
                 f"{self.min_width}x{self.min_height}), "
                 f"resized to ({orig_image.width}x{orig_image.height})"
             )
+        # webp maximum image size check
+        max_width, max_height = 16383, 16383
+        if orig_image.width > max_width or orig_image.height > max_height:
+            orig_image = orig_image.resize(
+                (min(orig_image.width, max_width), min(orig_image.height, max_height)),
+                reducing_gap=3.0,
+            )
+            self.logger.warning(
+                f"Image too large "
+                f"({width}x{height} > "
+                f"{max_width}x{max_height}), "
+                f"resized to ({orig_image.width}x{orig_image.height})"
+            )
         if self._deprecated_convert_image is None:
             self._deprecated_convert_image = "response_body" not in get_func_args(
                 self.convert_image

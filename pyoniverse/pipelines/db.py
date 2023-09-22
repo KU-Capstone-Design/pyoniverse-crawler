@@ -89,7 +89,7 @@ class MongoDBPipeline(BasePipeline):
                 spider.logger.info(f"Deleted previous event: {r.deleted_count}")
 
             update = {"$set": asdict(item)}
-            res: UpdateResult = self.write_db.get_collection("products").update_one(
+            res: UpdateResult = self.write_db.get_collection(coll).update_one(
                 query,
                 update,
                 upsert=True,
