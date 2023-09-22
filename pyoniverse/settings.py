@@ -138,3 +138,4 @@ LOG_FILE_APPEND = False
 IMAGES_STORE = "s3://pyoniverse-image/"  # bucket, prefix = IMAGE_STORE[5:].split("/")
 IMAGES_MIN_HEIGHT = 360
 IMAGES_MIN_WIDTH = 360
+IMAGES_EXPIRES = 15  # 15일 후에 이미지 삭제

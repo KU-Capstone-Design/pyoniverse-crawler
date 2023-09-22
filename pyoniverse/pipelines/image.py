@@ -176,19 +176,8 @@ class S3ImagePipeline(ImagesPipeline):
                 buf.seek(0)
                 checksum = md5sum(buf)
             width, height = image.size
-            if self.stage != "test":
-                self.store.persist_file(
-                    path,
-                    buf,
-                    info,
-                    meta={"width": width, "height": height},
-                    # Webp Type 으로 저장
-                    headers={"Content-Type": "image/webp"},
-                )
-            else:
-                self.logger.debug("Test mode - Image not saved")
 
-            # Image Size 저장 - Persist 이후에 저장해야 함
+            # Image Size 저장
             url_path = Path(request.url)
             if item.image.thumb and url_path == Path(item.image.thumb):
                 item.image.size["thumb"] = {"width": width, "height": height}
@@ -200,4 +189,15 @@ class S3ImagePipeline(ImagesPipeline):
                         "height": height,
                     }
                 )
+            if self.stage != "test":
+                self.store.persist_file(
+                    path,
+                    buf,
+                    info,
+                    meta={"width": width, "height": height},
+                    # Webp Type 으로 저장
+                    headers={"Content-Type": "image/webp"},
+                )
+            else:
+                self.logger.debug("Test mode - Image not saved")
         return checksum
