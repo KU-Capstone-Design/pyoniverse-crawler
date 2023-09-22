@@ -12,7 +12,7 @@ from scrapy.pipelines.images import ImagesPipeline
 from scrapy.utils.misc import md5sum
 from scrapy.utils.python import get_func_args
 
-from pyoniverse.items import EventVO
+from pyoniverse.items.event import BrandEventVO
 from pyoniverse.items.product import ProductVO
 
 
@@ -50,7 +50,7 @@ class S3ImagePipeline(ImagesPipeline):
         path = super().file_path(request, response, info, item=item)
         if isinstance(item, ProductVO):
             prefix = "products"
-        elif isinstance(item, EventVO):
+        elif isinstance(item, BrandEventVO):
             prefix = "events"
         else:
             raise ValueError("Invalid item type")
@@ -77,7 +77,7 @@ class S3ImagePipeline(ImagesPipeline):
                         o if o != value["url"] else url for o in item.image.others
                     ]
             else:
-                self.logger.warning(f"Image download failed: {item}")
+                self.logger.warning(f"Image download failed: {str(value)}\n{item}")
         if item.image.thumb and not item.image.thumb.startswith("s3"):
             item.image.thumb = None
         item.image.others = [o for o in item.image.others if not o.startswith("s3")]
@@ -186,6 +186,8 @@ class S3ImagePipeline(ImagesPipeline):
                 item.image.size["thumb"] = {"width": width, "height": height}
             else:
                 # 같은 우선순위끼리는 FIFO로 저장되므로, 순서가 보장됨
+                if "others" not in item.image.size:
+                    item.image.size["others"] = []
                 item.image.size["others"].append(
                     {
                         "width": width,
