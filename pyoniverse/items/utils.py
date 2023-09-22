@@ -13,11 +13,14 @@ def convert_currency(currency: str) -> int:
             raise ValueError(f"Unknown currency: {currency!r}")
 
 
-def get_timestamp() -> int:
+def get_timestamp(date: datetime | None = None) -> int:
     """
-    :return: 현재 시간의 타임스탬프
+    :return: 현재 or date 의 timestamp
     """
-    return int(datetime.utcnow().timestamp())
+    if date:
+        return int(date.timestamp())
+    else:
+        return int(datetime.utcnow().timestamp())
 
 
 def convert_event(event: str) -> int:

@@ -3,12 +3,13 @@ from typing import Optional
 
 from overrides import override
 
-from pyoniverse.items import CrawledInfoVO, EventSchema, ImageVO, ItemVO
+from pyoniverse.items import CrawledInfoVO, ImageVO, ItemVO
+from pyoniverse.items.schemas.event import BrandEventSchema
 from pyoniverse.items.utils import get_timestamp
 
 
 @dataclass(kw_only=True)
-class EventVO(ItemVO):
+class BrandEventVO(ItemVO):
     """
     created_at, updated_at 은 자동으로 생성됩니다.
     필요한 경우, 직접 입력해도 됩니다.
@@ -32,5 +33,5 @@ class EventVO(ItemVO):
         return "events"
 
     @staticmethod
-    def get_schema() -> EventSchema:
-        return EventSchema()
+    def get_schema() -> BrandEventSchema:
+        return BrandEventSchema()
