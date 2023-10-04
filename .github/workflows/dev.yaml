@@ -1,4 +1,4 @@
-name: Deploy Dev Lambda
+name: Deploy Crawler
 on:
   push:
     branches: [ develop ]
