@@ -109,27 +109,19 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 
 # Set settings whose default value is deprecated to a future-proof value
-REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-FEED_EXPORT_ENCODING = "utf-8"
+# REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
+# TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
-# Debugging
-# TODO : Change Log format
-
-# Output Items
-FEEDS = {
-    "debug.json": {
-        "format": "json",
-        "store_empty": False,
-        "indent": 4,
-        "overwrite": True,
-    },
-}
-
-# Secrets - .env
-MONGO_URI = os.getenv("MONGO_URI")
-MONGO_DB = os.getenv("MONGO_DB")
-STAGE = os.getenv("STAGE")
+# # Output Items
+# FEED_EXPORT_ENCODING = "utf-8"
+# FEEDS = {
+#     "debug.json": {
+#         "format": "json",
+#         "store_empty": False,
+#         "indent": 4,
+#         "overwrite": True,
+#     },
+# }
 
 # LOG
 LOG_FILE_APPEND = False

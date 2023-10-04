@@ -21,6 +21,7 @@ class CspaceWebSpider(Spider):
         "USER_AGENT_TYPE": "desktop",
         "download_delay": 5,
         "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
+        "LOG_FILE": f"{name}.log",
     }
 
     base_url = "https://www.cspace.co.kr"

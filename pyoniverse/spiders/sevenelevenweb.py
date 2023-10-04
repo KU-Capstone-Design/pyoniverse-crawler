@@ -25,9 +25,7 @@ class SevenElevenWebSpider(Spider):
     allowed_domains = ["www.7-eleven.co.kr"]
     base_url = "https://www.7-eleven.co.kr"
 
-    custom_settings = {
-        "USER_AGENT_TYPE": "desktop",
-    }
+    custom_settings = {"USER_AGENT_TYPE": "desktop", "LOG_FILE": f"{name}.log"}
 
     tab = {
         "Fresh Food": {

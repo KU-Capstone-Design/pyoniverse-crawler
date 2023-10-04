@@ -17,9 +17,7 @@ class CUWebSpider(Spider):
     name = "cuweb"
     brand = "CU"
 
-    custom_settings = {
-        "USER_AGENT_TYPE": "desktop",
-    }
+    custom_settings = {"USER_AGENT_TYPE": "desktop", "LOG_FILE": f"{name}.log"}
 
     allowed_domains = ["cu.bgfretail.com"]
     base_url = "https://cu.bgfretail.com/index.do"

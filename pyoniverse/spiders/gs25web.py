@@ -24,9 +24,7 @@ class Gs25WebSpider(Spider):
     name = "gs25web"
     brand = "GS25"
 
-    custom_settings = {
-        "USER_AGENT_TYPE": "desktop",
-    }
+    custom_settings = {"USER_AGENT_TYPE": "desktop", "LOG_FILE": f"{name}.log"}
 
     allowed_domains = ["gs25.gsretail.com"]
     base_url = "http://gs25.gsretail.com"

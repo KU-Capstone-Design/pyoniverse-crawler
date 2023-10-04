@@ -1,9 +1,7 @@
-import os
 from argparse import ArgumentParser
 
 import dotenv
 import nest_asyncio
-from scrapy import cmdline
 
 
 parser = ArgumentParser(
@@ -12,25 +10,26 @@ parser = ArgumentParser(
     epilog="Created by YeongRo Yun",
 )
 
-parser.add_argument("spider", type=str, help="Spider name")
-parser.add_argument("--test", action="store_true", help="Development mode")
+parser.add_argument(
+    "spider", type=str, help="Spider name. If spider==all then Run all spiders"
+)
+parser.add_argument(
+    "--stage", type=str, default="test", choices=["dev", "prod", "test"], required=True
+)
 
 nest_asyncio.apply()
 dotenv.load_dotenv()
 if __name__ == "__main__":
-    args = parser.parse_args()
-    logfile = f"{args.spider}.log"
-    if args.test:
-        # Test mode - Override stage environment variable
-        os.environ["STAGE"] = "test"
+    from pyoniverse.runners.all_runner import AllRunner
+    from pyoniverse.runners.single_runner import SingleRunner
 
-    if os.getenv("STAGE") in {"dev", "test"}:
+    args = parser.parse_args()
+    if args.stage in {"dev", "test"}:
         loglevel = "DEBUG"
     else:
         loglevel = "INFO"
-    script = f"scrapy crawl --logfile {logfile} --loglevel {loglevel} {args.spider}"
-    if args.test:
-        cmdline.execute(script.split())
+
+    if args.spider != "all":
+        SingleRunner.run(spider=args.spider, loglevel=loglevel, stage=args.stage)
     else:
-        # .dotenv 파일을 Github에 올리지 않기 때문에, GitAction Secret에 저장된 환경변수로 .dotenv 파일을 생성
-        cmdline.execute(script.split())
+        AllRunner.run(loglevel=loglevel, stage=args.stage)

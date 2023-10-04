@@ -25,7 +25,10 @@ class Emart24WebSpider(Spider):
     brand = "emart24"
     allowed_domains = ["emart24.co.kr"]
     base_url = "http://m.emart24.co.kr"
-    custom_settings = {"USER_AGENT_TYPE": "mobile"}
+    custom_settings = {
+        "USER_AGENT_TYPE": "mobile",
+        "LOG_FILE": f"{name}.log",
+    }
     lists = {
         "event": "/goods/event",
         "PB": "/goods/pl",
