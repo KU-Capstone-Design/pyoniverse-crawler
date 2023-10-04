@@ -18,9 +18,7 @@ class CUWebEventSpider(Spider):
     name = "cuweb_event"
     brand = "CU"
 
-    custom_settings = {
-        "USER_AGENT_TYPE": "desktop",
-    }
+    custom_settings = {"USER_AGENT_TYPE": "desktop", "LOG_FILE": f"{name}.log"}
     base_url = "https://cu.bgfretail.com"
     event_url = "https://cu.bgfretail.com/brand_info/news_listAjax.do"
     event_detail_url = "https://cu.bgfretail.com/brand_info/news_view.do?category=brand_info&depth2=5&idx={idx}"
