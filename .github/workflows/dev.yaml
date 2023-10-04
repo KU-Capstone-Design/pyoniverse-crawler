@@ -39,7 +39,7 @@ jobs:
           # Make .env file
           echo "MONGO_URI=$MONGO_URI" >> .env
           echo "MONGO_DB=$MONGO_DB" >> .env
-          docker build -t $REGISTRY/$DOCKER_IMAGE:$STAGE
+          docker build -t $REGISTRY/$DOCKER_IMAGE:$STAGE .
           docker push $REGISTRY/$DOCKER_IMAGE:$STAGE
 
       - name: Deploy Alarm
