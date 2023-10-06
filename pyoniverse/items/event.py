@@ -21,7 +21,7 @@ class BrandEventVO(ItemVO):
     start_at: int = field()
     end_at: int = field()
     name: str = field()
-    description: Optional[str] = field()
+    description: Optional[str] = field(default=None)
     image: ImageVO = field()
 
     def __post_init__(self):
