@@ -18,7 +18,8 @@ class BrandEventVO(ItemVO):
     crawled_info: CrawledInfoVO = field()
     created_at: int = field(default=None)
     updated_at: int = field(default=None)
-    written_at: int = field(default=None)  # 이벤트 작성일
+    start_at: int = field()
+    end_at: int = field()
     name: str = field()
     description: Optional[str] = field()
     image: ImageVO = field()
