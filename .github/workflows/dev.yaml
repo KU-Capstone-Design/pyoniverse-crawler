@@ -45,10 +45,11 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
+          channel: C05NYKY1KS6
           author_name: Github Action
           fields: repo,commit,message,author,took,workflow
           mention: here
           if_mention: failure,cancelled
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEPLOY_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
