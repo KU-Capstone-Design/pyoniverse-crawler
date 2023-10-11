@@ -3,6 +3,8 @@ from argparse import ArgumentParser
 import dotenv
 import nest_asyncio
 
+from pyoniverse.db.client import DBClient
+
 
 parser = ArgumentParser(
     prog="Pyoniverse Crawler",
@@ -15,6 +17,11 @@ parser.add_argument(
 )
 parser.add_argument(
     "--stage", type=str, default="test", choices=["dev", "prod", "test"], required=True
+)
+parser.add_argument(
+    "--clear_db",
+    action="store_true",
+    help="crawling_* DB 데이터 삭제. ETL Pipeline 상에서 동작할 때 사용. " "spider=all 이어야 한다",
 )
 
 nest_asyncio.apply()
@@ -32,4 +39,7 @@ if __name__ == "__main__":
     if args.spider != "all":
         SingleRunner.run(spider=args.spider, loglevel=loglevel, stage=args.stage)
     else:
+        if args.clear_db:
+            client = DBClient.instance()
+            client.clear()
         AllRunner.run(loglevel=loglevel, stage=args.stage)
