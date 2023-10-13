@@ -1,8 +1,13 @@
+import os
+
 import pytest
 
 from pyoniverse.out.converter.type_to_message import TypeToMessageConverter
 from pyoniverse.out.model.enum.message_enum import MessageTypeEnum
 from pyoniverse.out.model.log_result import LogResult
+
+if "tests" not in os.listdir():
+    os.chdir("..")
 
 
 @pytest.fixture

@@ -10,6 +10,10 @@ from pyoniverse.out.log_viewer.log_viewer import LogViewer
 from pyoniverse.out.model.log_result import LogResult
 
 
+if "tests" not in os.listdir():
+    os.chdir("..")
+
+
 @pytest.fixture
 def result_data():
     return {
@@ -74,7 +78,7 @@ def test_log_result():
 def test_log_viewer_parse(result_data):
     # given
     log_viewer = LogViewer()
-    log_path = Path("mock/mock.log")
+    log_path = Path("tests/mock/mock.log")
     # when
     res = log_viewer._parse(log_path)
 
@@ -121,7 +125,7 @@ def test_log_viewer_summary(log_results):
 def test_log_viewer(result_data):
     # given
     log_viewer = LogViewer()
-    root_dir = Path("mock")
+    root_dir = Path("tests/mock")
     log_files = set()
     for f in os.listdir(root_dir):
         if f.endswith(".log"):

@@ -1,6 +1,8 @@
+import os
 from dataclasses import asdict
 from typing import Dict
 
+import dotenv
 import pytest
 
 from pyoniverse.out.model.enum.message_enum import MessageTypeEnum
@@ -8,6 +10,15 @@ from pyoniverse.out.model.log_result import LogResult
 from pyoniverse.out.model.message import Message
 from pyoniverse.out.sender import Sender
 from pyoniverse.out.slack.slack import SlackSender
+
+
+if "tests" not in os.listdir():
+    os.chdir("..")
+
+
+@pytest.fixture
+def env():
+    dotenv.load_dotenv()
 
 
 @pytest.fixture
@@ -25,7 +36,7 @@ def test_convert_to_msg(data):
     msg = Message(
         type=MessageTypeEnum.TEST,
         source="pyoniverse-crawler",
-        text=f"{MessageTypeEnum.TEST} Result: {data['summary']}",
+        text=f"{MessageTypeEnum.TEST} Result: {asdict(data['summary'])}",
         ps={k: str(asdict(v)) for k, v in data.items() if k != "summary"},
         cc=["윤영로"],
     )
@@ -35,7 +46,7 @@ def test_convert_to_msg(data):
     assert msg == res
 
 
-def test_send_slack(data: Dict[str, LogResult]):
+def test_send_slack(env, data: Dict[str, LogResult]):
     # given
     sender = Sender()
     # when

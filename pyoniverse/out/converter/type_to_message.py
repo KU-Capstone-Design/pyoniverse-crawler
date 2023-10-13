@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from pyoniverse.out.converter.converter import Converter
 from pyoniverse.out.model.enum.message_enum import MessageTypeEnum
 
@@ -13,22 +15,22 @@ class TypeToMessageConverter(Converter):
             case MessageTypeEnum.SUCCESS:
                 return format.format(
                     message_type=kwargs["message_type"],
-                    result=kwargs["data"]["summary"],
+                    result=asdict(kwargs["data"]["summary"]),
                 )
             case MessageTypeEnum.ERROR:
                 return format.format(
                     message_type=kwargs["message_type"],
-                    result=kwargs["data"]["summary"],
+                    result=asdict(kwargs["data"]["summary"]),
                 )
             case MessageTypeEnum.DEBUG:
                 return format.format(
                     message_type=kwargs["message_type"],
-                    result=kwargs["data"]["summary"],
+                    result=asdict(kwargs["data"]["summary"]),
                 )
             case MessageTypeEnum.TEST:
                 return format.format(
                     message_type=kwargs["message_type"],
-                    result=kwargs["data"]["summary"],
+                    result=asdict(kwargs["data"]["summary"]),
                 )
             case _:
                 raise NotImplementedError
