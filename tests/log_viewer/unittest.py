@@ -118,25 +118,30 @@ def test_log_viewer_summary(log_results):
     assert res.elapsed_sec == elapsed_sec
 
 
-def test_log_viewer():
+def test_log_viewer(result_data):
     # given
     log_viewer = LogViewer()
+    root_dir = Path("./mock")
     log_files = set()
-    for f in os.listdir():
+    for f in os.listdir(root_dir):
         if f.endswith(".log"):
             log_files.add(f[:-4])
+    error_count = result_data["log_count/ERROR"]
+    collected_count = result_data["item_scraped_count"]
+    elapsed_sec = int(result_data["elapsed_time_seconds"])
     # when
-    res: Dict[str, LogResult] = log_viewer.result()
+    res: Dict[str, LogResult] = log_viewer.result(root_dir)
 
     # then
-    assert set(res.keys()) == log_files
-    for val in res.items():
+    assert set(res.keys()) == log_files.union({"summary"})
+    for val in res.values():
         assert isinstance(val, LogResult)
 
     for key, val in res.items():
-        assert val.collected_count >= 100
-        assert val.error_count <= 10
-        assert val.elapsed_sec <= 7200
-    assert "summary" in res
-    assert res["summary"].collected_count >= 5000
-    assert res["summary"].total_error <= 50
+        assert val.collected_count == collected_count
+        assert val.error_count == error_count
+        assert val.elapsed_sec == elapsed_sec
+
+    assert res["summary"].collected_count == collected_count
+    assert res["summary"].error_count == error_count
+    assert res["summary"].elapsed_sec == elapsed_sec
