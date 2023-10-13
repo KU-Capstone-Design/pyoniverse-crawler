@@ -1,8 +1,6 @@
 import logging
-from typing import Dict
 
-from pyoniverse.out.model.enum.message_enum import MessageTypeEnum
-from pyoniverse.out.model.log_result import LogResult
+from pyoniverse.out.s3.s3 import S3Sender
 from pyoniverse.out.slack.slack import SlackSender
 
 
@@ -16,11 +14,17 @@ class Sender:
         self.logger.setLevel(logging.INFO)
 
     def send(
-        self, target: str, message_type: MessageTypeEnum, data: Dict[str, LogResult]
+        self,
+        target: str,
+        **kwargs,
     ) -> bool:
         match target:
             case "slack":
-                res = SlackSender().send(message_type=message_type, data=data)
+                res = SlackSender().send(
+                    message_type=kwargs["message_type"], data=kwargs["data"]
+                )
+            case "s3":
+                res = S3Sender().send()
             case _:
                 raise NotImplementedError
 

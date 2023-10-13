@@ -49,5 +49,6 @@ class Engine:
             data = log_parser.parse()
             status = analyzer.analyze(data)
 
-            res = sender.send(target="slack", message_type=status, data=data)
+            sender.send(target="s3")
+            sender.send(target="slack", message_type=status, data=data)
             return status == MessageTypeEnum.SUCCESS
