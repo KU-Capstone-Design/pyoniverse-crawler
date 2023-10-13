@@ -3,8 +3,6 @@ from argparse import ArgumentParser
 import dotenv
 import nest_asyncio
 
-from pyoniverse.db.client import DBClient
-
 
 parser = ArgumentParser(
     prog="Pyoniverse Crawler",
@@ -26,20 +24,9 @@ parser.add_argument(
 
 nest_asyncio.apply()
 dotenv.load_dotenv()
+args = parser.parse_args()
 if __name__ == "__main__":
-    from pyoniverse.runners.all_runner import AllRunner
-    from pyoniverse.runners.single_runner import SingleRunner
+    from pyoniverse.engine import Engine
 
-    args = parser.parse_args()
-    if args.stage in {"dev", "test"}:
-        loglevel = "DEBUG"
-    else:
-        loglevel = "INFO"
-
-    if args.spider != "all":
-        SingleRunner.run(spider=args.spider, loglevel=loglevel, stage=args.stage)
-    else:
-        if args.clear_db:
-            client = DBClient.instance()
-            client.clear()
-        AllRunner.run(loglevel=loglevel, stage=args.stage)
+    engine = Engine(stage=args.stage, spider=args.spider, clear_db=args.clear_db)
+    engine.run()

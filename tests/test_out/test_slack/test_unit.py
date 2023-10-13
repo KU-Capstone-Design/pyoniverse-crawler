@@ -50,6 +50,6 @@ def test_send_slack(env, data: Dict[str, LogResult]):
     # given
     sender = Sender()
     # when
-    res = sender.send_slack(MessageTypeEnum.TEST, data)
+    res = sender.send(target="slack", message_type=MessageTypeEnum.TEST, data=data)
     # then
     assert res is True

@@ -6,12 +6,12 @@ from typing import Dict
 
 import pytest
 
-from pyoniverse.out.log_viewer.log_viewer import LogViewer
+from pyoniverse.parser.log_parser.log_parser import LogParser
 from pyoniverse.out.model.log_result import LogResult
 
 
 if "tests" not in os.listdir():
-    os.chdir("..")
+    os.chdir("../../test_out")
 
 
 @pytest.fixture
@@ -75,26 +75,26 @@ def test_log_result():
     assert log_result.elapsed_sec == result_data["elapsed_sec"]
 
 
-def test_log_viewer_parse(result_data):
+def test_log_parser_parse(result_data):
     # given
-    log_viewer = LogViewer()
+    log_parser = LogParser()
     log_path = Path("tests/mock/mock.log")
     # when
-    res = log_viewer._parse(log_path)
+    res = log_parser._parse(log_path)
 
     # then
     assert res == result_data
 
 
-def test_log_viewer_convert(result_data):
+def test_log_parser_convert(result_data):
     # given
-    log_viewer = LogViewer()
+    log_parser = LogParser()
     error_count = result_data["log_count/ERROR"]
     collected_count = result_data["item_scraped_count"]
     elapsed_sec = int(result_data["elapsed_time_seconds"])
 
     # when
-    res = log_viewer._convert(result_data)
+    res = log_parser._convert(result_data)
 
     # then
     assert res.collected_count == collected_count
@@ -102,9 +102,9 @@ def test_log_viewer_convert(result_data):
     assert res.elapsed_sec == elapsed_sec
 
 
-def test_log_viewer_summary(log_results):
+def test_log_parser_summary(log_results):
     # given
-    log_viewer = LogViewer()
+    log_parser = LogParser()
     collected_count = reduce(
         lambda acc, cur: acc + cur.collected_count, log_results.values(), 0
     )
@@ -114,7 +114,7 @@ def test_log_viewer_summary(log_results):
     elapsed_sec = max(log_results.values(), key=lambda x: x.elapsed_sec).elapsed_sec
 
     # when
-    res = log_viewer._summary(log_results)
+    res = log_parser._summary(log_results)
 
     # then
     assert res.collected_count == collected_count
@@ -122,9 +122,9 @@ def test_log_viewer_summary(log_results):
     assert res.elapsed_sec == elapsed_sec
 
 
-def test_log_viewer(result_data):
+def test_log_parser(result_data):
     # given
-    log_viewer = LogViewer()
+    log_parser = LogParser()
     root_dir = Path("tests/mock")
     log_files = set()
     for f in os.listdir(root_dir):
@@ -134,7 +134,7 @@ def test_log_viewer(result_data):
     collected_count = result_data["item_scraped_count"]
     elapsed_sec = int(result_data["elapsed_time_seconds"])
     # when
-    res: Dict[str, LogResult] = log_viewer.result(root_dir)
+    res: Dict[str, LogResult] = log_parser.parse(root_dir)
 
     # then
     assert set(res.keys()) == log_files.union({"summary"})

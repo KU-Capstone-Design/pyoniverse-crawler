@@ -15,9 +15,17 @@ class Sender:
         self.logger = logging.getLogger("scrapy.sender")
         self.logger.setLevel(logging.INFO)
 
-        self.__slack_sender = SlackSender(*args, **kwargs)
-
-    def send_slack(
-        self, message_type: MessageTypeEnum, data: Dict[str, LogResult]
+    def send(
+        self, target: str, message_type: MessageTypeEnum, data: Dict[str, LogResult]
     ) -> bool:
-        return self.__slack_sender.send(message_type, data)
+        match target:
+            case "slack":
+                res = SlackSender().send(message_type=message_type, data=data)
+            case _:
+                raise NotImplementedError
+
+        if res:
+            self.logger.info(f"send to {target} success.")
+        else:
+            self.logger.error(f"send to {target} failed")
+        return res
