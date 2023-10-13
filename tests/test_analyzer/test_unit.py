@@ -23,7 +23,7 @@ def success_data() -> Dict[str, LogResult]:
 def failed_data() -> List[Dict[str, LogResult]]:
     return [
         {"summary": LogResult(collected_count=4999, error_count=50, elapsed_sec=7200)},
-        {"summary": LogResult(collected_count=5000, error_count=51, elapsed_sec=7200)},
+        {"summary": LogResult(collected_count=5000, error_count=501, elapsed_sec=7200)},
         {"summary": LogResult(collected_count=5000, error_count=50, elapsed_sec=7201)},
     ]
 

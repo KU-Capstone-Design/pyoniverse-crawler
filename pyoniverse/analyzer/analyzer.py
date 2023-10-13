@@ -25,7 +25,7 @@ class Analyzer:
         summarized = data["summary"]
         if (
             summarized.collected_count >= 5000
-            and summarized.error_count <= 50
+            and (100 * summarized.error_count / summarized.collected_count) <= 10
             and summarized.elapsed_sec <= 7200
         ):
             return MessageTypeEnum.SUCCESS
