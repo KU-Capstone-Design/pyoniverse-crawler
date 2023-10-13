@@ -1,5 +1,6 @@
 from pyoniverse.analyzer.analyzer import Analyzer
 from pyoniverse.db.client import DBClient
+from pyoniverse.out.model.enum.message_enum import MessageTypeEnum
 from pyoniverse.out.sender import Sender
 from pyoniverse.parser.log_parser.log_parser import LogParser
 from pyoniverse.runners.all_runner import AllRunner
@@ -49,4 +50,4 @@ class Engine:
             status = analyzer.analyze(data)
 
             res = sender.send(target="slack", message_type=status, data=data)
-            return res
+            return status == MessageTypeEnum.SUCCESS
