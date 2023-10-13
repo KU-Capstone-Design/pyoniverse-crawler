@@ -29,16 +29,25 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Make .env
+        shell: bash
+        run: |
+          # Make .env file
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
+          echo "MONGO_DB=${{ secrets.MONGO_DEV_DB }}" >> .env
+          echo "QUEUE_NAME=${{ secrets.SLACK_SQS_NAME_DEV }}" >> .env
+
+      - name: Test
+        shell: bash
+        run: |
+          python -m pytest -v
+
       - name: Build and Push
         shell: bash
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           DOCKER_IMAGE: pyoniverse-crawler
-          MONGO_DB: ${{ secrets.MONGO_DEV_DB }}
         run: |
-          # Make .env file
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
-          echo "MONGO_DB=$MONGO_DB" >> .env
           docker build -t $REGISTRY/$DOCKER_IMAGE:$STAGE .
           docker push $REGISTRY/$DOCKER_IMAGE:$STAGE
 
