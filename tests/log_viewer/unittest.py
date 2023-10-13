@@ -1,3 +1,26 @@
+import os
+from typing import Dict
+
+from pyoniverse.log_viewer.model.log_result import LogResult
+
+
+def test_log_result():
+    # given
+    result_data = {
+        "collected_count": 1,
+        "error_count": 1,
+        "elapsed_sec": 10,
+        "some_bad_field": "bad",
+    }
+    # when
+    log_result = LogResult.load(result_data)
+
+    # then
+    assert log_result.collected_count == result_data["collected_count"]
+    assert log_result.error_count == result_data["error_count"]
+    assert log_result.elapsed_sec == result_data["elapsed_sec"]
+
+
 def test_log_viewer():
     # given
     log_viewer = LogViewer()
