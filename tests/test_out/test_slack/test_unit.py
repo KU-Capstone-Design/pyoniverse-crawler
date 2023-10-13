@@ -48,8 +48,8 @@ def test_convert_to_msg(data):
 
 def test_send_slack(env, data: Dict[str, LogResult]):
     # given
-    sender = Sender(target="slack")
+    sender = Sender()
     # when
-    res = sender.send(MessageTypeEnum.TEST, data)
+    res = sender.send(target="slack", message_type=MessageTypeEnum.TEST, data=data)
     # then
     assert res is True

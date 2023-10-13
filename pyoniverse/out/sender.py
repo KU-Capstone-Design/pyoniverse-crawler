@@ -11,14 +11,21 @@ class Sender:
     Facade Pattern
     """
 
-    def __init__(self, target, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.logger = logging.getLogger("scrapy.sender")
         self.logger.setLevel(logging.INFO)
-        self.__target = target
 
-    def send(self, message_type: MessageTypeEnum, data: Dict[str, LogResult]) -> bool:
-        match self.__target:
+    def send(
+        self, target: str, message_type: MessageTypeEnum, data: Dict[str, LogResult]
+    ) -> bool:
+        match target:
             case "slack":
-                return SlackSender().send(message_type=message_type, data=data)
+                res = SlackSender().send(message_type=message_type, data=data)
             case _:
                 raise NotImplementedError
+
+        if res:
+            self.logger.info(f"send to {target} success.")
+        else:
+            self.logger.error(f"send to {target} failed")
+        return res

@@ -6,11 +6,11 @@ from typing import Dict, Optional
 from pyoniverse.out.model.log_result import LogResult
 
 
-class LogViewer:
+class LogParser:
     def __init__(self, *args, **kwargs):
         pass
 
-    def result(self, root_dir=".") -> Dict[str, LogResult]:
+    def parse(self, root_dir=".") -> Dict[str, LogResult]:
         res = {}
         for f in os.listdir(root_dir):
             if not f.endswith(".log"):
