@@ -1,12 +1,14 @@
-from typing import NoReturn
-
-from scrapy.crawler import CrawlerRunner
+from overrides import override
+from scrapy.crawler import CrawlerProcess
 
 from pyoniverse.runners.runner import Runner
 
 
 class SingleRunner(Runner):
     @classmethod
-    def _process(cls, runner: CrawlerRunner, *args, **kwargs) -> NoReturn:
-        spider: str = kwargs["spider"]
-        runner.crawl(spider)
+    @override
+    def run(cls, *args, **kwargs):
+        settings = cls._prepare(*args, **kwargs)
+        runner: CrawlerProcess = CrawlerProcess(settings)
+        runner.crawl(kwargs["spider"])
+        runner.start()
