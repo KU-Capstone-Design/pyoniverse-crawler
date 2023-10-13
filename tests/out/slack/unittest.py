@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Dict
 
 import pytest
@@ -24,12 +25,12 @@ def test_convert_to_msg(data):
     msg = Message(
         type=MessageTypeEnum.TEST,
         source="pyoniverse-crawler",
-        text="test_message",
-        ps=data,
+        text=f"{MessageTypeEnum.TEST} Result: {data['summary']}",
+        ps={k: str(asdict(v)) for k, v in data.items() if k != "summary"},
         cc=["윤영로"],
     )
     # when
-    res = slack_sender._convert(MessageTypeEnum.TEST, data)
+    res = slack_sender._convert(message_type=MessageTypeEnum.TEST, data=data)
     # then
     assert msg == res
 

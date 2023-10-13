@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Dict
 
 from pyoniverse.out.converter.type_to_message import TypeToMessageConverter
@@ -18,10 +19,10 @@ class SlackSender:
     ) -> Message:
         message_converter = TypeToMessageConverter()
         msg = {
-            "type": message_type,
+            "type": message_type.value,
             "source": "pyoniverse-crawler",
             "text": message_converter.convert(message_type=message_type, data=data),
-            "ps": data,
+            "ps": {k: str(asdict(v)) for k, v in data.items() if k != "summary"},
             "cc": ["윤영로"],
         }
         return Message.load(msg)
