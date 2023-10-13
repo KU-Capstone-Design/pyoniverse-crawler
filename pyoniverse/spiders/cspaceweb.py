@@ -19,8 +19,7 @@ class CspaceWebSpider(Spider):
 
     custom_settings = {
         "USER_AGENT_TYPE": "desktop",
-        "download_delay": 5,
-        "CONCURRENT_REQUESTS_PER_DOMAIN": 2,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 5,
         "LOG_FILE": f"{name}.log",
     }
 

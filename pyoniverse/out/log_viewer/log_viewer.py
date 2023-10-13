@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Dict, Optional
 
-from pyoniverse.log_viewer.model.log_result import LogResult
+from pyoniverse.out.model.log_result import LogResult
 
 
 class LogViewer:
