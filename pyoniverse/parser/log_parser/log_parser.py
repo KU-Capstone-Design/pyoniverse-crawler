@@ -38,7 +38,7 @@ class LogParser:
     def _convert(self, data: dict) -> LogResult:
         res = LogResult(
             collected_count=data["item_scraped_count"],
-            error_count=data["log_count/ERROR"],
+            error_count=data.get("log_count/ERROR", 0),
             elapsed_sec=int(data["elapsed_time_seconds"]),
         )
         return res
