@@ -29,4 +29,8 @@ if __name__ == "__main__":
     from pyoniverse.engine import Engine
 
     engine = Engine(stage=args.stage, spider=args.spider, clear_db=args.clear_db)
-    engine.run()
+    res = engine.run()
+    if res:
+        exit(0)
+    else:
+        exit(1)  # Failed
