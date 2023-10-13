@@ -1,5 +1,7 @@
 from typing import Dict
 
+from pyoniverse.out.log_viewer.log_viewer import LogViewer
+from pyoniverse.out.model.log_result import LogResult
 from pyoniverse.runners.all_runner import AllRunner
 
 
