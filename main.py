@@ -4,6 +4,8 @@ import dotenv
 import nest_asyncio
 
 from pyoniverse.db.client import DBClient
+from pyoniverse.out.log_viewer.log_viewer import LogViewer
+from pyoniverse.out.sender import Sender
 
 
 parser = ArgumentParser(
@@ -43,3 +45,5 @@ if __name__ == "__main__":
             client = DBClient.instance()
             client.clear()
         AllRunner.run(loglevel=loglevel, stage=args.stage)
+        sender = Sender(target="slack")
+        sender.send()
