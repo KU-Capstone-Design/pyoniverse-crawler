@@ -16,5 +16,5 @@ def test_acceptance_spec():
     # assert "summary" in res
     # assert res["summary"].collected_count >= 5000
     # assert res["summary"].error_count <= 50
-    # assert res["summary"].elapsed_sec <= 3600
+    # assert res["summary"].elapsed_sec <= 7200
     pass
