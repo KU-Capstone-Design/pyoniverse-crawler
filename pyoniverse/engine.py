@@ -44,11 +44,10 @@ class Engine:
 
             log_parser = LogParser()
             analyzer = Analyzer()
-            sender = Sender()
-
             data = log_parser.parse()
             status = analyzer.analyze(data)
-
-            sender.send(target="s3")
-            sender.send(target="slack", message_type=status, data=data)
+            if self.__stage in {"dev", "prod"}:
+                sender = Sender()
+                sender.send(target="s3")
+                sender.send(target="slack", message_type=status, data=data)
             return status == MessageTypeEnum.SUCCESS
