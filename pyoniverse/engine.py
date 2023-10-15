@@ -42,12 +42,13 @@ class Engine:
                 client.clear()
             AllRunner.run(loglevel=loglevel, stage=self.__stage)
 
+            sender = Sender()
+            sender.send(target="s3")
+
             log_parser = LogParser()
             analyzer = Analyzer()
             data = log_parser.parse()
             status = analyzer.analyze(data)
             if self.__stage in {"dev", "prod"}:
-                sender = Sender()
-                sender.send(target="s3")
                 sender.send(target="slack", message_type=status, data=data)
             return status == MessageTypeEnum.SUCCESS

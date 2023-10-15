@@ -28,7 +28,7 @@ class LogParser:
         datetime.datetime.utcnow()  # eval 에 datetime이 있어서 추가함(formatter에 의해 datetime이 지워지면 안된다)
         with open(log_path, "r") as fd:
             context = fd.read()
-            stats = re.search(r"Dumping Scrapy stats:\n(\{.+\})", context, re.DOTALL)
+            stats = re.search(r"Dumping Scrapy stats:\n(\{.+?})", context, re.DOTALL)
             if not stats:
                 return None
             else:

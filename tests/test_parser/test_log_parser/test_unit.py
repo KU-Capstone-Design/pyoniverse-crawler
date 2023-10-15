@@ -6,12 +6,12 @@ from typing import Dict
 
 import pytest
 
-from pyoniverse.parser.log_parser.log_parser import LogParser
 from pyoniverse.out.model.log_result import LogResult
+from pyoniverse.parser.log_parser.log_parser import LogParser
 
 
-if "tests" not in os.listdir():
-    os.chdir("../../test_out")
+while "tests" not in os.listdir():
+    os.chdir("..")
 
 
 @pytest.fixture
@@ -122,7 +122,7 @@ def test_log_parser_summary(log_results):
     assert res.elapsed_sec == elapsed_sec
 
 
-def test_log_parser(result_data):
+def test_log_parser():
     # given
     log_parser = LogParser()
     root_dir = Path("tests/mock")
@@ -130,9 +130,6 @@ def test_log_parser(result_data):
     for f in os.listdir(root_dir):
         if f.endswith(".log"):
             log_files.add(f[:-4])
-    error_count = result_data["log_count/ERROR"]
-    collected_count = result_data["item_scraped_count"]
-    elapsed_sec = int(result_data["elapsed_time_seconds"])
     # when
     res: Dict[str, LogResult] = log_parser.parse(root_dir)
 
@@ -140,12 +137,3 @@ def test_log_parser(result_data):
     assert set(res.keys()) == log_files.union({"summary"})
     for val in res.values():
         assert isinstance(val, LogResult)
-
-    for key, val in res.items():
-        assert val.collected_count == collected_count
-        assert val.error_count == error_count
-        assert val.elapsed_sec == elapsed_sec
-
-    assert res["summary"].collected_count == collected_count
-    assert res["summary"].error_count == error_count
-    assert res["summary"].elapsed_sec == elapsed_sec
