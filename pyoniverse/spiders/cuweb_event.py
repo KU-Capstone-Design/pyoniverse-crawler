@@ -39,7 +39,10 @@ class CUWebEventSpider(Spider):
                 datetime.strptime(event["evtSYmd"], "%Y%m%d"),
                 datetime.strptime(event["evtEYmd"], "%Y%m%d"),
             )
-            banner = str(Path(self.img_base_url) / event["bannerImg"])
+            if not event["bannerImg"].startswith("http"):
+                banner = str(Path(self.img_base_url) / event["bannerImg"])
+            else:
+                banner = event["bannerImg"]
             title = event["prdDispNm"]
             crawl_id = event["evtCd"]
             yield Request(
@@ -57,7 +60,11 @@ class CUWebEventSpider(Spider):
     def parse(self, response: Response, **kwargs) -> BrandEventVO:
         soup = BeautifulSoup(response.text, "html.parser")
         event = soup.select_one(".event_area")
-        imgs = ["https:" + i["src"] for i in event.select("img")]
+        imgs = [
+            "https:" + i["src"]
+            for i in event.select("img")
+            if not i["src"].startswith("http")
+        ]
         # description = event.get_text().strip()
         # description = re.sub(r"(\s)+", r"\1", description)
 
