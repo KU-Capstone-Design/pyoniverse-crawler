@@ -62,25 +62,33 @@ class S3ImagePipeline(ImagesPipeline):
         self.store: S3FilesStore
         """
         store: S3FilesStore = self.store
+        others = []
         for ok, value in results:
             if ok:
                 # Webp 로 변환
                 path = Path(value["path"]).with_suffix(".webp")
                 if store.prefix:
-                    url = f"s3://{store.bucket}/{store.prefix}/{path}"
+                    url = f"s3://{store.bucket}/{store.prefix}{path}"
                 else:
                     url = f"s3://{store.bucket}/{path}"
                 if value["url"] == item.image.thumb:
                     item.image.thumb = url
                 else:
-                    item.image.others = [
-                        o if o != value["url"] else url for o in item.image.others
-                    ]
+                    others.append(url)
+                    # item.image.others = [
+                    #     o if o != value["url"] else url for o in item.image.others
+                    # ]
             else:
                 self.logger.warning(f"Image download failed: {str(value)}\n{item}")
         if item.image.thumb and not item.image.thumb.startswith("s3"):
             item.image.thumb = None
-        item.image.others = [o for o in item.image.others if not o.startswith("s3")]
+            del item.image.size["thumb"]
+        if item.image.thumb is None and len(others) > 0:
+            item.image.thumb = others[0]
+            item.image.size["thumb"] = item.image.size["others"].pop(0)
+            item.image.others = others[1:]
+        else:
+            item.image.others = others
         return item
 
     # Webp 저장을 위한 Overrides

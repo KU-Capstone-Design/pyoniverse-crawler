@@ -40,7 +40,10 @@ class CUWebEventSpider(Spider):
                 datetime.strptime(event["evtEYmd"], "%Y%m%d"),
             )
             if not event["bannerImg"].startswith("http"):
-                banner = str(Path(self.img_base_url) / event["bannerImg"])
+                if event["bannerImg"].startswith("/"):
+                    banner = str(self.img_base_url + event["bannerImg"])
+                else:
+                    banner = str(self.img_base_url + "/" + event["bannerImg"])
             else:
                 banner = event["bannerImg"]
             title = event["prdDispNm"]
@@ -60,11 +63,18 @@ class CUWebEventSpider(Spider):
     def parse(self, response: Response, **kwargs) -> BrandEventVO:
         soup = BeautifulSoup(response.text, "html.parser")
         event = soup.select_one(".event_area")
-        imgs = [
-            "https:" + i["src"]
-            for i in event.select("img")
-            if not i["src"].startswith("http")
-        ]
+        imgs = []
+        for i in event.select("img"):
+            if i["src"].startswith("http"):
+                imgs.append(i["src"])
+                continue
+            elif i["src"].startswith("//"):
+                imgs.append("https:" + i["src"])
+                continue
+            elif i["src"].startswith("/"):
+                imgs.append("https:/" + i["src"])
+            elif i["src"].startswith(":"):
+                imgs.append("https" + i["src"])
         # description = event.get_text().strip()
         # description = re.sub(r"(\s)+", r"\1", description)
 
