@@ -37,7 +37,8 @@ jobs:
           echo "MONGO_DB=${{ secrets.MONGO_DEV_DB }}" >> .env
           echo "QUEUE_NAME=${{ secrets.SLACK_SQS_NAME_DEV }}" >> .env
           echo "S3_BUCKET=${{ secrets.S3_LOG_BUCKET }}" >> .env
-          echo "S3_LOG_KEY=${{ secrets.S3_LOG_KEY }}" >> .env
+          echo "S3_KEY=${{ secrets.S3_LOG_KEY_DEV }}" >> .env
+          echo "IMAGES_STORE=${{ secrets.IMAGES_STORE_DEV }}" >> .env
 
       - name: Test
         shell: bash
