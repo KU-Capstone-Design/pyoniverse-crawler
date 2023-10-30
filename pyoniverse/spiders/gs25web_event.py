@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 
 from bs4 import BeautifulSoup
@@ -87,6 +88,10 @@ class Gs25WebEventSpider(Spider):
         info = soup.select_one("div.board_view.event_view")
 
         title = info.select_one(".bv_title").text.strip()
+        date_format = re.compile(r"이벤트 기간\. \d{4}\.\d{2}\.\d{2} ~ \d{4}\.\d{2}\.\d{2}")
+        title = date_format.sub("", title)
+        title = re.sub(r"\s+", " ", title).strip()
+
         imgs = [i["src"] for i in info.select("img")]
         if desc := info.select_one(".invisible"):
             description = desc.text.strip()

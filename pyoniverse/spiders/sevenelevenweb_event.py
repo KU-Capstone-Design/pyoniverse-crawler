@@ -86,6 +86,9 @@ class SevenElevenWebSpider(Spider):
         description = event.text.strip()
         description = re.sub(r"(\s)+", r"\1", description).strip() or None
 
+        title = re.sub(r"\(\d{1,2}/\d{1,2}~\d{1,2}/\d{1,2}\)", "", kwargs["title"])
+        title = re.sub(r"\s+", " ", title).strip()
+
         event = BrandEventVO(
             crawled_info=CrawledInfoVO(
                 spider=self.name,
@@ -93,7 +96,7 @@ class SevenElevenWebSpider(Spider):
                 brand=convert_brand(self.brand),
                 url=response.url,
             ),
-            name=kwargs["title"],
+            name=title,
             image=ImageVO(thumb=thumb, others=imgs),
             description=description,
             start_at=get_timestamp(kwargs["start_at"]),
