@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from scrapy import FormRequest, Request, Spider
 from scrapy.exceptions import DropItem
 from scrapy.http import HtmlResponse
-from scrapy.shell import inspect_response
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.python.failure import Failure
 
@@ -168,7 +167,14 @@ class CUWebSpider(Spider):
             product_img = detail.select_one("div.prodDetail-w > img")
             if product_img is None:
                 raise DropItem("No product image")
-            product_img = "https:" + product_img["src"]
+
+            product_img = product_img["src"]
+            if product_img.startswith("//"):
+                product_img = "https:" + product_img
+            elif product_img.startswith("/"):
+                product_img = "https:/" + product_img
+            elif product_img.startswith(":"):
+                product_img = "https" + product_img
 
             event_imgs = detail.select("div.prodDetail-w img")
             for event_img in event_imgs:
@@ -200,6 +206,17 @@ class CUWebSpider(Spider):
             raw_tags = list(map(lambda x: x.text.strip(), raw_tags))
             tags.extend(raw_tags)
 
+            tmp_events = []
+            for e in events:
+                try:
+                    event = EventVO(
+                        brand=convert_brand(self.brand), id=convert_event(e)
+                    )
+                    tmp_events.append(event)
+                except ValueError:
+                    continue
+            events = tmp_events
+
             # Build product
 
             product = ProductVO(
@@ -212,14 +229,7 @@ class CUWebSpider(Spider):
                 name=product_name,
                 price=PriceVO(value=price, currency=convert_currency("KRW")),
                 image=ImageVO(thumb=product_img),
-                events=list(
-                    map(
-                        lambda x: EventVO(
-                            brand=convert_brand(self.brand), id=convert_event(x)
-                        ),
-                        events,
-                    )
-                ),
+                events=events,
                 description=description,
                 tags=tags,
             )

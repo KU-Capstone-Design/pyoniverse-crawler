@@ -82,7 +82,8 @@ class S3ImagePipeline(ImagesPipeline):
                 self.logger.warning(f"Image download failed: {str(value)}\n{item}")
         if item.image.thumb and not item.image.thumb.startswith("s3"):
             item.image.thumb = None
-            del item.image.size["thumb"]
+            if "thumb" in item.image.size:
+                del item.image.size["thumb"]
         if item.image.thumb is None and len(others) > 0:
             item.image.thumb = others[0]
             item.image.size["thumb"] = item.image.size["others"].pop(0)
