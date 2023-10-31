@@ -1,17 +1,17 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 from scrapy import Request, Spider
 from scrapy.http import HtmlResponse
-from scrapy.shell import inspect_response
 
 from pyoniverse.items import CrawledInfoVO, ImageVO
 from pyoniverse.items.event import BrandEventVO
 from pyoniverse.items.utils import convert_brand, get_timestamp
 
 
-class CspaceWebSpider(Spider):
+# TODO : Cspace Web Event는 Event Date 형식이 제멋대로이기 때문에, 데이터 수집 후, 직접 변경한다.
+class CspaceWebEventSpider(Spider):
     name = "cspaceweb_event"
     brand = "cspace"
 
@@ -43,9 +43,9 @@ class CspaceWebSpider(Spider):
             thumb = self.base_url + event.select_one(".img img")["src"]
             title = event.select_one(".subject_text").text.strip()
             dates = date_pattern.search(title)
-            start_at, end_at = dates.group(1), dates.group(2)
-            start_at = datetime.strptime(start_at, "%y.%m.%d")
-            end_at = datetime.strptime(end_at, "%y.%m.%d")
+            # start_at, end_at = dates.group(1), dates.group(2)
+            # start_at = datetime.strptime(start_at, "%y.%m.%d")
+            # end_at = datetime.strptime(end_at, "%y.%m.%d")
             title = date_pattern.sub("", title).strip()
             crawl_id = thumb.split("/")[-1].split(".")[0]
             yield response.follow(
@@ -53,8 +53,8 @@ class CspaceWebSpider(Spider):
                 callback=self.parse,
                 cb_kwargs={
                     "title": title,
-                    "start_at": start_at,
-                    "end_at": end_at,
+                    # "start_at": start_at,
+                    # "end_at": end_at,
                     "crawl_id": crawl_id,
                     "thumb": thumb,
                 },
@@ -83,7 +83,9 @@ class CspaceWebSpider(Spider):
             ),
             name=kwargs["title"],
             image=ImageVO(thumb=kwargs["thumb"], others=imgs),
-            start_at=get_timestamp(kwargs["start_at"]),
-            end_at=get_timestamp(kwargs["end_at"]),
+            # start_at=get_timestamp(kwargs["start_at"]),
+            # end_at=get_timestamp(kwargs["end_at"]),
+            start_at=get_timestamp(datetime.utcnow() + timedelta(hours=9)),
+            end_at=get_timestamp(datetime.utcnow() + timedelta(hours=249)),
         )
         yield event
