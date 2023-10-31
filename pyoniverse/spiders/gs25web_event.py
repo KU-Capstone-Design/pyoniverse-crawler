@@ -43,7 +43,7 @@ class Gs25WebEventSpider(Spider):
         )
 
     def parse_list(self, response: HtmlResponse, **kwargs) -> Request:
-        soup = BeautifulSoup(response.text)
+        soup = BeautifulSoup(response.text, "html.parser")
         csrf = soup.select_one("input[name=CSRFToken]")["value"]
 
         yield FormRequest(
