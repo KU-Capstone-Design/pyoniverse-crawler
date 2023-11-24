@@ -1,0 +1,20 @@
+scrapy==2.10.1
+overrides==7.4.0
+pymongo==4.5.0
+marshmallow==3.20.1
+beautifulsoup4==4.12.2
+pre-commit==3.4.0
+python-dotenv==1.0.0
+# Fake User Agent ###
+scrapy-fake-useragent==1.4.4
+###
+nest-asyncio==1.5.7
+Pillow==10.0.0
+boto3==1.28.47
+boto3-type-annotations==0.3.1
+
+# Image
+olefile==0.46
+
+# test
+pytest==7.4.2
